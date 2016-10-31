@@ -1,0 +1,29 @@
+{
+    "name": "brainrepo/hermes",
+    "description": "Hermes, the flessible notification library",
+    "type": "library",
+    "require-dev": {
+        "phpspec/phpspec": "^3.1"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Brainrepo",
+            "email": "murru7@gmail.com"
+        }
+    ],
+    "require": {},
+    "config": {
+        "bin": "bin/phpspe"
+    },
+    "autoload": {
+        "psr-0": {
+            "Hermes\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-0": {
+            "spec\\Hermes\\": "."
+        }
+    }
+}
