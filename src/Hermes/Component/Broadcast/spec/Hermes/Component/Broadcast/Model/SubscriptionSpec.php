@@ -13,9 +13,10 @@
  * @author Mauro Murru Brainrepo <murru7@gmail.com>
  */
 
-namespace spec\Hermes\Component\Broadcast\Channel;
+namespace spec\Hermes\Component\Broadcast\Model;
 
-use Hermes\Component\Broadcast\Transport\AddressInterface;
+use Hermes\Component\Broadcast\Model\AddressInterface;
+use Hermes\Component\Broadcast\Model\Subscription;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -23,7 +24,7 @@ class SubscriptionSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType('Hermes\Component\Broadcast\Channel\Subscription');
+        $this->shouldHaveType(Subscription::Class);
     }
 
     function let(AddressInterface $address)

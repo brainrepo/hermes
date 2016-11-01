@@ -13,7 +13,7 @@
  * @author Mauro Murru Brainrepo <murru7@gmail.com>
  */
 
-namespace spec\Hermes\Component\Broadcast\Channel\Events;
+namespace spec\Hermes\Component\Broadcast\Event;
 
 use Hermes\Component\Broadcast\Event\SubscriptionStartedEvent;
 use Hermes\Component\Broadcast\Model\SubscriptionInterface;
