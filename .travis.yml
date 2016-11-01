@@ -1,24 +1,17 @@
+
 language: php
 
-sudo: false
+php:
+  - 5.3
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+  - hhvm
 
-cache:
-    directories:
-        - $HOME/.composer/cache/files
+before_script: composer install --prefer-source --no-interaction
 
-matrix:
-    include:
-        - php: 5.3
-          env: COMPOSER_FLAGS='--prefer-lowest --prefer-stable'
-        - php: 5.4
-        - php: 5.5
-        - php: 5.6
-        - php: 7.0
-          env: DEPENDENCIES=dev
-        - php: hhvm
+script: bin/phpspec run -fpretty --verbose
 
-before_script:
-    - if [ "$DEPENDENCIES" = "dev" ]; then perl -pi -e 's/^}$/,"minimum-stability":"dev"}/' composer.json; fi;
-    - composer update $COMPOSER_FLAGS
-
-script: phpspec run
+notifications:
+    email: murru7@gmail.com
