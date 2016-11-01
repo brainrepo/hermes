@@ -78,6 +78,13 @@ class Broadcaster
         $this->channelRepository->add($channel);
     }
 
+    /**
+     * @param ReceiverInterface $receiver
+     * @param $transportName
+     * @param $channelName
+     *
+     * @throws AddressNotFoundException
+     */
     public function subscribe(ReceiverInterface $receiver, $transportName, $channelName)
     {
         try {

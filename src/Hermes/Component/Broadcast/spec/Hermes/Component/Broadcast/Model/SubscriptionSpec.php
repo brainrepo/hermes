@@ -18,26 +18,25 @@ namespace spec\Hermes\Component\Broadcast\Model;
 use Hermes\Component\Broadcast\Model\AddressInterface;
 use Hermes\Component\Broadcast\Model\Subscription;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class SubscriptionSpec extends ObjectBehavior
 {
-    function it_is_initializable()
+    public function it_is_initializable()
     {
-        $this->shouldHaveType(Subscription::Class);
+        $this->shouldHaveType(Subscription::class);
     }
 
-    function let(AddressInterface $address)
+    public function let(AddressInterface $address)
     {
         $this->beConstructedWith($address, 'transport');
     }
 
-    function it_can_get_address(AddressInterface $address)
+    public function it_can_get_address(AddressInterface $address)
     {
         $this->getAddress()->shouldReturn($address);
     }
 
-    function it_can_get_transport_id()
+    public function it_can_get_transport_id()
     {
         $this->getTransportId()->shouldReturn('transport');
     }

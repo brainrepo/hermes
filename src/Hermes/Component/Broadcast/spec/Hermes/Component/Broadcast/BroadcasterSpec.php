@@ -29,18 +29,17 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class BroadcasterSpec extends ObjectBehavior
 {
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType('Hermes\Component\Broadcast\Broadcaster');
     }
 
-    function let(TransportInterface $transport,
+    public function let(TransportInterface $transport,
                  ChannelInterface $channel,
                  TransportRepository $transportRepository,
                  ChannelRepository $channelRepository,
                  EventDispatcher $eventDispatcher
-    )
-    {
+    ) {
         $channel->getName()->willReturn('soccer_team');
         $channel->addSubscription(Argument::any())->willReturn();
         $channelRepository->getById('soccer_team')->willReturn($channel);
@@ -53,24 +52,23 @@ class BroadcasterSpec extends ObjectBehavior
         $this->beConstructedWith($transportRepository, $channelRepository, $eventDispatcher);
     }
 
-    function it_can_add_transport(TransportInterface $transport1)
+    public function it_can_add_transport(TransportInterface $transport1)
     {
         $this->addTransport($transport1);
     }
 
-    function it_can_add_channel(ChannelInterface $channel1)
+    public function it_can_add_channel(ChannelInterface $channel1)
     {
         $this->addChannel($channel1);
     }
 
-    function it_can_subscribe(
+    public function it_can_subscribe(
         ReceiverInterface $receiver,
         ChannelInterface $channel,
         ChannelRepository $channelRepository,
         AddressInterface $address,
         EventDispatcher $eventDispatcher
-    )
-    {
+    ) {
         $channelRepository->findOneOrCreate('soccer_team', Argument::any())->willReturn($channel);
         $receiver->getAddressByTransport('ios.push_notification')->willReturn($address);
         $eventDispatcher->dispatch('hermes.broadcast.channel.subscription.started', Argument::any())->shouldBeCalled();
@@ -81,7 +79,7 @@ class BroadcasterSpec extends ObjectBehavior
         $this->subscribe($receiver, 'ios.push_notification', 'soccer_team');
     }
 
-    function it_can_fail_subscribing_an_user_without_correct_address(ReceiverInterface $receiver, ChannelInterface $channel)
+    public function it_can_fail_subscribing_an_user_without_correct_address(ReceiverInterface $receiver, ChannelInterface $channel)
     {
         $receiver->getAddressByTransport('ios.push_notification')->willThrow(AddressNotFoundException::class);
         $this->shouldThrow(AddressNotFoundException::class)->duringSubscribe($receiver,
@@ -89,7 +87,7 @@ class BroadcasterSpec extends ObjectBehavior
     }
 
     //todo: to be completed
-    function it_can_broadcast_messages(MessageInterface $message, TransportInterface $transport)
+    public function it_can_broadcast_messages(MessageInterface $message, TransportInterface $transport)
     {
         $this->broadcast($message, 'soccer_team');
     }

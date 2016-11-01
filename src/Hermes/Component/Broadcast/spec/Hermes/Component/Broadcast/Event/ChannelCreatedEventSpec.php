@@ -18,16 +18,15 @@ namespace spec\Hermes\Component\Broadcast\Event;
 use Hermes\Component\Broadcast\Event\ChannelCreatedEvent;
 use Hermes\Component\Broadcast\Model\ChannelInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class ChannelCreatedEventSpec extends ObjectBehavior
 {
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType(ChannelCreatedEvent::class);
     }
 
-    function let(ChannelInterface $channel)
+    public function let(ChannelInterface $channel)
     {
         $this->beConstructedWith($channel);
     }

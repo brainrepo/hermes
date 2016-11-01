@@ -18,16 +18,15 @@ namespace spec\Hermes\Component\Broadcast\Event;
 use Hermes\Component\Broadcast\Event\SubscriptionStartedEvent;
 use Hermes\Component\Broadcast\Model\SubscriptionInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class SubscriptionStartedEventSpec extends ObjectBehavior
 {
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType(SubscriptionStartedEvent::class);
     }
 
-    function let(SubscriptionInterface $subscription)
+    public function let(SubscriptionInterface $subscription)
     {
         $this->beConstructedWith($subscription);
     }
