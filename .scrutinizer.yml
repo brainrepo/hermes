@@ -2,3 +2,12 @@ checks:
     php:
         code_rating: true
         duplication: true
+
+build:
+    tests:
+        override:
+            -
+                command: 'vendor/bin/phpspec run'
+                coverage:
+                    file: 'coverage.xml'
+                    format: 'clover'

@@ -1,7 +1,21 @@
+extensions:
+  PhpSpecCodeCoverage\CodeCoverageExtension:
+    format:
+      - clover
+    output:
+      html: coverage
+      clover: coverage.xml
+    include:
+      - src/*
+
 suites:
     Broadcast:
         namespace: Hermes\Component\Broadcast
         spec_path: ./src/Hermes/Component/Broadcast
         src_path: ./src/Hermes/Component/Broadcast
 
+extensions:
+    - PhpSpecCodeCoverage\CodeCoverageExtension
+
 formatter.name: pretty
+
