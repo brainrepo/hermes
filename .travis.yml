@@ -9,9 +9,13 @@ php:
   - 7.0
   - hhvm
 
+cache:
+    directories:
+        - vendor
+
 before_script: composer install --prefer-source --no-interaction
 
-script: bin/phpspec run -fpretty --verbose
+script: ./vendor/bin/phpspec run -fpretty --verbose
 
 notifications:
     email: murru7@gmail.com
