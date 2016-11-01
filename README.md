@@ -4,6 +4,8 @@ Hermes, the flessible notification library
 [![Build Status](https://travis-ci.org/brainrepo/hermes.svg?branch=develop)](https://travis-ci.org/brainrepo/hermes)
     [![Build Status](https://scrutinizer-ci.com/g/brainrepo/hermes/badges/build.png?b=develop)](https://scrutinizer-ci.com/g/brainrepo/hermes/build-status/develop)
     [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/brainrepo/hermes/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/brainrepo/hermes/?branch=develop)
+[![Code Coverage](https://scrutinizer-ci.com/g/brainrepo/hermes/badges/coverage.png?b=develop)](https://scrutinizer-ci.com/g/brainrepo/hermes/?branch=develop)
+
 Installing Dependencies
 -----------------------
 
