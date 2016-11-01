@@ -2,8 +2,14 @@
     "name": "brainrepo/hermes",
     "description": "Hermes, the flessible notification library",
     "type": "library",
+    "require": {
+        "symfony/event-dispatcher": "^3.1",
+        "Doctrine/Common": "^2.6"
+    },
     "require-dev": {
-        "phpspec/phpspec": "^3.1"
+        "phpspec/phpspec": "^3.1",
+        "friendsofphp/php-cs-fixer": "^1.12",
+        "mmoreram/php-formatter": "^1.1"
     },
     "license": "MIT",
     "authors": [
@@ -12,12 +18,8 @@
             "email": "murru7@gmail.com"
         }
     ],
-    "require": {
-        "symfony/event-dispatcher": "^3.1",
-        "Doctrine/Common": "^2.6"
-    },
     "config": {
-        "bin": "bin/phpspec"
+        "bin": "bin/"
     },
     "autoload": {
         "psr-0": {
@@ -28,5 +30,14 @@
         "psr-0": {
             "spec\\Hermes\\": "."
         }
+    },
+    "scripts": {
+        "check-style": [
+            "vendor/bin/php-cs-fixer fix --config-file=.php_cs || true",
+            "vendor/bin/php-formatter f:h:f src || true",
+            "vendor/bin/php-formatter f:u:s src || true",
+            "vendor/bin/php-formatter f:h:f spec || true",
+            "vendor/bin/php-formatter f:u:s spec || true"
+        ]
     }
 }

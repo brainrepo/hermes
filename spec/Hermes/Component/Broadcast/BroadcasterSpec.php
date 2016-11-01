@@ -1,26 +1,31 @@
 <?php
-/**
+
+/*
+ * This file is part of the Hermes package.
  *
- *  This file is part of the Hermes package.
+ * Copyright (c) 2014-2016 Mauro Murru Brainrepo
  *
- *  (c) Mauro Murru (Brainrepo)  <murru7@gmail.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  *
- *  For the full copyright and license information, please view the LICENSE
- *  file that was distributed with this source code.
+ * Feel free to edit as you please, and have fun.
  *
+ * @author Mauro Murru Brainrepo <murru7@gmail.com>
  */
 
 namespace spec\Hermes\Component\Broadcast;
 
+use Hermes\Component\Broadcast\Exception\AddressNotFoundException;
+use Hermes\Component\Broadcast\Model\AddressInterface;
+use Hermes\Component\Broadcast\Model\ChannelInterface;
+use Hermes\Component\Broadcast\Model\MessageInterface;
+use Hermes\Component\Broadcast\Model\ReceiverInterface;
+use Hermes\Component\Broadcast\Model\TransportInterface;
+use Hermes\Component\Broadcast\Repository\ChannelRepository;
+use Hermes\Component\Broadcast\Repository\TransportRepository;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Hermes\Component\Broadcast\Receiver\ReceiverInterface;
-use Hermes\Component\Broadcast\Transport\AddressInterface;
-use Hermes\Component\Broadcast\Transport\TransportInterface;
-use Hermes\Component\Broadcast\Channel\ChannelInterface;
-use Hermes\Component\Broadcast\Channel\ChannelRepository;
-use Hermes\Component\Broadcast\Transport\TransportRepository;
 
 class BroadcasterSpec extends ObjectBehavior
 {
@@ -78,14 +83,14 @@ class BroadcasterSpec extends ObjectBehavior
 
     function it_can_fail_subscribing_an_user_without_correct_address(ReceiverInterface $receiver, ChannelInterface $channel)
     {
-        $receiver->getAddressByTransport('ios.push_notification')->willThrow('Hermes\Component\Broadcast\Receiver\AddressNotFoundException');
-        $this->shouldThrow('Hermes\Component\Broadcast\Receiver\AddressNotFoundException')->duringSubscribe($receiver,
+        $receiver->getAddressByTransport('ios.push_notification')->willThrow(AddressNotFoundException::class);
+        $this->shouldThrow(AddressNotFoundException::class)->duringSubscribe($receiver,
             'ios.push_notification', 'soccer_team');
     }
 
     //todo: to be completed
-//    function it_can_broadcast_messages(Message $message, TransportInterface $transport)
-//    {
-//
-//    }
+    function it_can_broadcast_messages(MessageInterface $message, TransportInterface $transport)
+    {
+        $this->broadcast($message, 'soccer_team');
+    }
 }

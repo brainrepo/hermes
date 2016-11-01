@@ -1,41 +1,35 @@
 <?php
 
-/**
+/*
+ * This file is part of the Hermes package.
  *
- *  This file is part of the Hermes package.
+ * Copyright (c) 2014-2016 Mauro Murru Brainrepo
  *
- *  (c) Mauro Murru (Brainrepo) <murru7@gmail.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  *
- *  For the full copyright and license information, please view the LICENSE
- *  file that was distributed with this source code.
+ * Feel free to edit as you please, and have fun.
  *
+ * @author Mauro Murru Brainrepo <murru7@gmail.com>
  */
 
 namespace Hermes\Component\Broadcast;
 
-use Hermes\Component\Broadcast\Channel\Channel;
-use Hermes\Component\Broadcast\Channel\ChannelInterface;
-use Hermes\Component\Broadcast\Channel\ChannelRepository;
-use Hermes\Component\Broadcast\Channel\ChannelNotFoundException;
-use Hermes\Component\Broadcast\Channel\Events\ChannelCreatedEvent;
-use Hermes\Component\Broadcast\Channel\Events\ChannelEvent;
-use Hermes\Component\Broadcast\Channel\Events\SubscriptionEndedEvent;
-use Hermes\Component\Broadcast\Channel\Events\SubscriptionEvent;
-use Hermes\Component\Broadcast\Channel\Events\SubscriptionStartedEvent;
-use Hermes\Component\Broadcast\Channel\Subscription;
-use Hermes\Component\Broadcast\Message\Message;
-use Hermes\Component\Broadcast\Receiver\AddressNotFoundException;
-use Hermes\Component\Broadcast\Receiver\ReceiverInterface;
-use Hermes\Component\Broadcast\Transport\TransportInterface;
-use Hermes\Component\Broadcast\Transport\TransportRepository;
-
-use Symfony\Component\EventDispatcher\Event;
+use Hermes\Component\Broadcast\Event\ChannelCreatedEvent;
+use Hermes\Component\Broadcast\Event\SubscriptionEndedEvent;
+use Hermes\Component\Broadcast\Event\SubscriptionStartedEvent;
+use Hermes\Component\Broadcast\Exception\AddressNotFoundException;
+use Hermes\Component\Broadcast\Model\ChannelInterface;
+use Hermes\Component\Broadcast\Model\MessageInterface;
+use Hermes\Component\Broadcast\Model\ReceiverInterface;
+use Hermes\Component\Broadcast\Model\Subscription;
+use Hermes\Component\Broadcast\Model\TransportInterface;
+use Hermes\Component\Broadcast\Repository\ChannelRepository;
+use Hermes\Component\Broadcast\Repository\TransportRepository;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Monolog\Logger;
 
 class Broadcaster
 {
-
     /**
      * @var TransportRepository
      */
@@ -53,21 +47,20 @@ class Broadcaster
 
     /**
      * Broadcaster constructor.
+     *
      * @param TransportRepository $transportRepository
-     * @param ChannelRepository $channelRepository
-     * @param EventDispatcher $eventDispatcher
+     * @param ChannelRepository   $channelRepository
+     * @param EventDispatcher     $eventDispatcher
      */
     public function __construct(
         TransportRepository $transportRepository,
         ChannelRepository $channelRepository,
         EventDispatcher $eventDispatcher
-    )
-    {
+    ) {
         $this->transportRepository = $transportRepository;
         $this->channelRepository = $channelRepository;
         $this->eventDispatcher = $eventDispatcher;
     }
-
 
     /**
      * @param TransportInterface $transport
@@ -104,10 +97,9 @@ class Broadcaster
         }
     }
 
-    public function broadcast(Message $message, $channelName)
+    public function broadcast(MessageInterface $message, $channelName)
     {
         //todo: to be implemented
-
 
         //nei transport spool butto i messaggi
 
@@ -119,5 +111,4 @@ class Broadcaster
     {
         //todo: to be implemented
     }
-
 }
