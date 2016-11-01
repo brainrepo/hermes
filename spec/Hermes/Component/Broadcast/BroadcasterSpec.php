@@ -1,4 +1,14 @@
 <?php
+/**
+ *
+ *  This file is part of the Hermes package.
+ *
+ *  (c) Mauro Murru (Brainrepo)  <murru7@gmail.com>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
 
 namespace spec\Hermes\Component\Broadcast;
 
@@ -52,8 +62,9 @@ class BroadcasterSpec extends ObjectBehavior
             'onesignal', 'soccer_team');
     }
 
-    function it_can_broadcast_messages(Message $message, TransportInterface $transport)
-    {
-        //todo: to be completed
-    }
+    //todo: to be completed
+//    function it_can_broadcast_messages(Message $message, TransportInterface $transport)
+//    {
+//
+//    }
 }
