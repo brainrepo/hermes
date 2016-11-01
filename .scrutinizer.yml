@@ -12,7 +12,7 @@ build:
     tests:
         override:
             -
-                command: 'vendor/bin/phpspec run'
+                command: 'vendor/bin/phpspec run -f progress'
                 coverage:
                     file: 'coverage.xml'
-                    format: 'clover'
+                    format: 'php-clover'
