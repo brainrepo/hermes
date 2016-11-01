@@ -14,7 +14,7 @@
     ],
     "require": {},
     "config": {
-        "bin": "bin/phpspe"
+        "bin": "bin/phpspec"
     },
     "autoload": {
         "psr-0": {
