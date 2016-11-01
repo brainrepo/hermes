@@ -12,7 +12,10 @@
             "email": "murru7@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "symfony/event-dispatcher": "^3.1",
+        "Doctrine/Common": "^2.6"
+    },
     "config": {
         "bin": "bin/phpspec"
     },

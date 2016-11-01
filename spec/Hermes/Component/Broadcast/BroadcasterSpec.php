@@ -12,14 +12,15 @@
 
 namespace spec\Hermes\Component\Broadcast;
 
-use Hermes\Component\Broadcast\Channel\SubscriptionInterface;
-use Hermes\Component\Broadcast\Receiver\ReceiverInterface;
-use Hermes\Component\Broadcast\Transport\AddressInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Hermes\Component\Broadcast\Receiver\ReceiverInterface;
+use Hermes\Component\Broadcast\Transport\AddressInterface;
 use Hermes\Component\Broadcast\Transport\TransportInterface;
 use Hermes\Component\Broadcast\Channel\ChannelInterface;
-use Hermes\Component\Broadcast\Message\Message;
+use Hermes\Component\Broadcast\Channel\ChannelRepository;
+use Hermes\Component\Broadcast\Transport\TransportRepository;
 
 class BroadcasterSpec extends ObjectBehavior
 {
@@ -28,14 +29,23 @@ class BroadcasterSpec extends ObjectBehavior
         $this->shouldHaveType('Hermes\Component\Broadcast\Broadcaster');
     }
 
-    function let(TransportInterface $transport, ChannelInterface $channel)
+    function let(TransportInterface $transport,
+                 ChannelInterface $channel,
+                 TransportRepository $transportRepository,
+                 ChannelRepository $channelRepository,
+                 EventDispatcher $eventDispatcher
+    )
     {
         $channel->getName()->willReturn('soccer_team');
         $channel->addSubscription(Argument::any())->willReturn();
-        $transport->getName()->willReturn('onesignal');
-        $transportArray = array('onesignal' => $transport);
-        $channelArray = array('soccer_team' => $channel);
-        $this->beConstructedWith($transportArray, $channelArray);
+        $channelRepository->getById('soccer_team')->willReturn($channel);
+        $channelRepository->add(Argument::any())->willReturn();
+
+        $transport->getName()->willReturn('ios.push_notification');
+        $transportRepository->add(Argument::any())->willReturn();
+        $transportRepository->getById('ios.push_notification')->willReturn($transport);
+
+        $this->beConstructedWith($transportRepository, $channelRepository, $eventDispatcher);
     }
 
     function it_can_add_transport(TransportInterface $transport1)
@@ -48,18 +58,29 @@ class BroadcasterSpec extends ObjectBehavior
         $this->addChannel($channel1);
     }
 
-    function it_can_subscribe(ReceiverInterface $receiver, ChannelInterface $channel, AddressInterface $address)
+    function it_can_subscribe(
+        ReceiverInterface $receiver,
+        ChannelInterface $channel,
+        ChannelRepository $channelRepository,
+        AddressInterface $address,
+        EventDispatcher $eventDispatcher
+    )
     {
-        $receiver->getAddressByTransport('onesignal')->willReturn($address);
-        $this->subscribe($receiver, 'onesignal', 'soccer_team');
-        $channel->addSubscription(Argument::any())->shouldBeCalled();
+        $channelRepository->findOneOrCreate('soccer_team', Argument::any())->willReturn($channel);
+        $receiver->getAddressByTransport('ios.push_notification')->willReturn($address);
+        $eventDispatcher->dispatch('hermes.broadcast.channel.subscription.started', Argument::any())->shouldBeCalled();
+        $eventDispatcher->dispatch('hermes.broadcast.channel.subscription.ended', Argument::any())->shouldBeCalled();
+        $channel->addSubscription(Argument::any(), Argument::any())->shouldBeCalled();
+
+        //Todo: find a method to define the callback to check $eventDispatcher->dispatch('hermes.broadcast.channel.create', Argument::any())->shouldBeCalled();
+        $this->subscribe($receiver, 'ios.push_notification', 'soccer_team');
     }
 
     function it_can_fail_subscribing_an_user_without_correct_address(ReceiverInterface $receiver, ChannelInterface $channel)
     {
-        $receiver->getAddressByTransport('onesignal')->willThrow('Hermes\Component\Broadcast\Receiver\AddressNotFoundException');
+        $receiver->getAddressByTransport('ios.push_notification')->willThrow('Hermes\Component\Broadcast\Receiver\AddressNotFoundException');
         $this->shouldThrow('Hermes\Component\Broadcast\Receiver\AddressNotFoundException')->duringSubscribe($receiver,
-            'onesignal', 'soccer_team');
+            'ios.push_notification', 'soccer_team');
     }
 
     //todo: to be completed

@@ -15,46 +15,66 @@ namespace Hermes\Component\Broadcast;
 
 use Hermes\Component\Broadcast\Channel\Channel;
 use Hermes\Component\Broadcast\Channel\ChannelInterface;
+use Hermes\Component\Broadcast\Channel\ChannelRepository;
+use Hermes\Component\Broadcast\Channel\ChannelNotFoundException;
+use Hermes\Component\Broadcast\Channel\Events\ChannelCreatedEvent;
+use Hermes\Component\Broadcast\Channel\Events\ChannelEvent;
+use Hermes\Component\Broadcast\Channel\Events\SubscriptionEndedEvent;
+use Hermes\Component\Broadcast\Channel\Events\SubscriptionEvent;
+use Hermes\Component\Broadcast\Channel\Events\SubscriptionStartedEvent;
 use Hermes\Component\Broadcast\Channel\Subscription;
 use Hermes\Component\Broadcast\Message\Message;
 use Hermes\Component\Broadcast\Receiver\AddressNotFoundException;
 use Hermes\Component\Broadcast\Receiver\ReceiverInterface;
 use Hermes\Component\Broadcast\Transport\TransportInterface;
-use Hermes\Component\Broadcast\Channel\ChannelNotFoundException;
+use Hermes\Component\Broadcast\Transport\TransportRepository;
+
+use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Monolog\Logger;
 
 class Broadcaster
 {
 
     /**
-     * @var array
+     * @var TransportRepository
      */
-    protected $transports = array();
+    protected $transportRepository;
 
     /**
-     * @var array
+     * @var ChannelRepository
      */
-    protected $channels = array();
+    protected $channelRepository;
 
+    /**
+     * @var EventDispatcher
+     */
+    protected $eventDispatcher;
 
     /**
      * Broadcaster constructor.
-     * @param array $transportArray
-     * @param array $channelArray
+     * @param TransportRepository $transportRepository
+     * @param ChannelRepository $channelRepository
+     * @param EventDispatcher $eventDispatcher
      */
-    public function __construct($transportArray = array(), $channelArray = array())
+    public function __construct(
+        TransportRepository $transportRepository,
+        ChannelRepository $channelRepository,
+        EventDispatcher $eventDispatcher
+    )
     {
-        //Todo: use monolog to log errors
-        //Todo: use event hendler
-        $this->transports = $transportArray;
-        $this->channels = $channelArray;
+        $this->transportRepository = $transportRepository;
+        $this->channelRepository = $channelRepository;
+        $this->eventDispatcher = $eventDispatcher;
     }
+
 
     /**
      * @param TransportInterface $transport
      */
     public function addTransport(TransportInterface $transport)
     {
-        $this->transports[$transport->getName()] = $transport;
+        $this->transportRepository->add($transport);
     }
 
     /**
@@ -62,7 +82,7 @@ class Broadcaster
      */
     public function addChannel(ChannelInterface $channel)
     {
-        $this->channels[$channel->getName()] = $channel;
+        $this->channelRepository->add($channel);
     }
 
     public function subscribe(ReceiverInterface $receiver, $transportName, $channelName)
@@ -71,21 +91,22 @@ class Broadcaster
             $address = $receiver->getAddressByTransport($transportName);
             $subscription = new Subscription($address, $transportName);
 
-            if (!array_key_exists($channelName, $this->channels)) {
-                $this->channels[$channelName] = new Channel($channelName);
-            }
+            $this->eventDispatcher->dispatch('hermes.broadcast.channel.subscription.started', new SubscriptionStartedEvent($subscription));
 
-            $this->channels[$channelName]->addSubscription($subscription);
+            $eventDispatcher = $this->eventDispatcher;
+            $this->channelRepository->findOneOrCreate($channelName, function (ChannelInterface $channel) use ($eventDispatcher) {
+                $eventDispatcher->dispatch('hermes.broadcast.channel.create', new ChannelCreatedEvent($channel));
+            })->addSubscription($subscription);
 
+            $this->eventDispatcher->dispatch('hermes.broadcast.channel.subscription.ended', new SubscriptionEndedEvent($subscription));
         } catch (AddressNotFoundException $exception) {
-            throw new AddressNotFoundException(sprintf("I can't subscrive this receiver because it have not a valid address for %s transport", $transportName));
+            throw new AddressNotFoundException(sprintf("I can't subscribe this receiver because it have not a valid address for %s transport", $transportName));
         }
     }
 
     public function broadcast(Message $message, $channelName)
     {
         //todo: to be implemented
-        $channel = $this->getChannelByName($channelName);
 
 
         //nei transport spool butto i messaggi
@@ -99,17 +120,4 @@ class Broadcaster
         //todo: to be implemented
     }
 
-    /**
-     * @param $name
-     * @return Channel
-     * @throws ChannelNotFoundException
-     */
-    private function getChannelByName($name)
-    {
-        if (!array_key_exists($name, $this->channels)) {
-            throw new ChannelNotFoundException(sprintf('There is not %s channel.', $name));
-        }
-
-        return $this->channels[$name];
-    }
 }
