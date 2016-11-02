@@ -27,10 +27,10 @@ interface SubscriptionRepositoryInterface
      */
     public function add(SubscriptionInterface $subscription);
 
-
     /**
-     * @param string $channelId
+     * @param string             $channelId
      * @param TransportInterface $transport
+     *
      * @return SubscriptionInterface[]
      */
     public function findByChannelAndTransport($channelId, TransportInterface $transport);

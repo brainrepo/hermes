@@ -43,8 +43,7 @@ class BroadcasterSpec extends ObjectBehavior
         SubscriptionFactory $subscriptionFactory,
         TransportInterface $transportSms,
         TransportInterface $transportEmail
-    )
-    {
+    ) {
         $this->beConstructedWith($transportRepository, $subscriptionRepository, $subscriptionFactory, $eventDispatcher);
     }
 
@@ -64,12 +63,11 @@ class BroadcasterSpec extends ObjectBehavior
         TransportInterface $transportSms,
         TransportInterface $transportEmail,
         SubscriptionInterface $subscription
-    )
-    {
+    ) {
         $channelId = 'brainrepo_soccer_friends';
-        $transportRepository->getByTransportIds(null)->willReturn(array($transportSms, $transportEmail));
-        $subscriptionRepository->findByChannelAndTransport($channelId, $transportSms)->willReturn(array($subscription));
-        $subscriptionRepository->findByChannelAndTransport($channelId, $transportEmail)->willReturn(array());
+        $transportRepository->getByTransportIds(null)->willReturn([$transportSms, $transportEmail]);
+        $subscriptionRepository->findByChannelAndTransport($channelId, $transportSms)->willReturn([$subscription]);
+        $subscriptionRepository->findByChannelAndTransport($channelId, $transportEmail)->willReturn([]);
         $this->broadcast($message, $channelId, null);
         $transportSms->queue($subscription, $message)->shouldHaveBeenCalled();
         $transportEmail->queue($subscription, $message)->shouldNotHaveBeenCalled();
@@ -87,12 +85,11 @@ class BroadcasterSpec extends ObjectBehavior
         TransportInterface $transportPush,
         TransportInterface $transportEmail,
         SubscriptionInterface $subscription
-    )
-    {
+    ) {
         $channelId = 'brainrepo_soccer_friends';
-        $transportRepository->getByTransportIds(array('ios.push_notification'))->willReturn(array($transportPush));
-        $subscriptionRepository->findByChannelAndTransport($channelId, $transportPush)->willReturn(array($subscription));
-        $this->broadcast($message, $channelId, array('ios.push_notification'));
+        $transportRepository->getByTransportIds(['ios.push_notification'])->willReturn([$transportPush]);
+        $subscriptionRepository->findByChannelAndTransport($channelId, $transportPush)->willReturn([$subscription]);
+        $this->broadcast($message, $channelId, ['ios.push_notification']);
         $transportPush->queue($subscription, $message)->shouldHaveBeenCalled();
         $transportEmail->queue($subscription, $message)->shouldNotHaveBeenCalled();
         $eventDispatcher->dispatch(BroadcastEvent::STARTED, Argument::any())->shouldHaveBeenCalled();

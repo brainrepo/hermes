@@ -54,18 +54,17 @@ class Broadcaster
     /**
      * Broadcaster constructor.
      *
-     * @param TransportRepositoryInterface $transportRepository
+     * @param TransportRepositoryInterface    $transportRepository
      * @param SubscriptionRepositoryInterface $subscriptionRepository
-     * @param SubscriptionFactory $subscriptionFactory
-     * @param EventDispatcher $eventDispatcher
+     * @param SubscriptionFactory             $subscriptionFactory
+     * @param EventDispatcher                 $eventDispatcher
      */
     public function __construct(
         TransportRepositoryInterface $transportRepository,
         SubscriptionRepositoryInterface $subscriptionRepository,
         SubscriptionFactory $subscriptionFactory,
         EventDispatcher $eventDispatcher
-    )
-    {
+    ) {
         $this->transportRepository = $transportRepository;
         $this->subscriptionRepository = $subscriptionRepository;
         $this->eventDispatcher = $eventDispatcher;
@@ -84,7 +83,6 @@ class Broadcaster
         $this->subscriptionRepository->add($subscription);
         $this->eventDispatcher->dispatch(SubscriptionEvent::ENDED, new SubscriptionEndedEvent($subscription));
     }
-
 
     /**
      * @param MessageInterface $message

@@ -20,8 +20,7 @@ use Symfony\Component\EventDispatcher\Event;
 
 class BroadcastEvent extends Event
 {
-
-    const STARTED = "hermes.broadcast.broadcast.started";
+    const STARTED = 'hermes.broadcast.broadcast.started';
     const PREPARED_FOR_QUEUE = 'hermes.broadcast.message.prepared_for_queued';
     const QUEUED = 'hermes.broadcast.message.queued';
     const ENDED = 'hermes.broadcast.broadcast.ended';

@@ -24,8 +24,10 @@ interface TransportRepositoryInterface extends ObjectRepository
     public function getById($argument1);
 
     /**
-     * Return by transports id, if is null return all transports
+     * Return by transports id, if is null return all transports.
+     *
      * @param array $transportIds
+     *
      * @return array
      */
     public function getByTransportIds($transportIds = null);

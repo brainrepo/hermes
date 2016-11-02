@@ -20,10 +20,9 @@ interface TransportInterface
     public function send();
     public function getId();
 
-
     /**
      * @param SubscriptionInterface $subscriptions
-     * @param MessageInterface $message
+     * @param MessageInterface      $message
      */
     public function queue(SubscriptionInterface $subscriptions, MessageInterface $message);
 }
