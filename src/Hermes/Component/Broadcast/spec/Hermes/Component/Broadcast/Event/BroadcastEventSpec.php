@@ -15,19 +15,20 @@
 
 namespace spec\Hermes\Component\Broadcast\Event;
 
-use Hermes\Component\Broadcast\Event\ChannelEvent;
-use Hermes\Component\Broadcast\Model\ChannelInterface;
+use Hermes\Component\Broadcast\Event\BroadcastEvent;
+use Hermes\Component\Broadcast\Model\MessageInterface;
 use PhpSpec\ObjectBehavior;
 
-class ChannelEventSpec extends ObjectBehavior
+class BroadcastEventSpec extends ObjectBehavior
 {
     public function it_is_initializable()
     {
-        $this->shouldHaveType(ChannelEvent::class);
+        $this->shouldHaveType(BroadcastEvent::class);
     }
 
-    public function let(ChannelInterface $channel)
+    public function let(MessageInterface $message)
     {
-        $this->beConstructedWith($channel);
+        $transport = 'ios.push_notification';
+        $this->beConstructedWith($message, $transport);
     }
 }

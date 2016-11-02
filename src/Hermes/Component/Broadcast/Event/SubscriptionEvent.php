@@ -20,6 +20,9 @@ use Symfony\Component\EventDispatcher\Event;
 
 class SubscriptionEvent extends Event
 {
+    const STARTED = "hermes.broadcast.subscription.started";
+    const ENDED = "hermes.broadcast.subscription.ended";
+
     /**
      * @var SubscriptionInterface
      */
