@@ -15,30 +15,36 @@
 
 namespace Hermes\Component\Broadcast;
 
-use Hermes\Component\Broadcast\Event\ChannelCreatedEvent;
+use Hermes\Component\Broadcast\Event\BroadcastEvent;
+use Hermes\Component\Broadcast\Event\MessageQueuedEvent;
 use Hermes\Component\Broadcast\Event\SubscriptionEndedEvent;
+use Hermes\Component\Broadcast\Event\SubscriptionEvent;
 use Hermes\Component\Broadcast\Event\SubscriptionStartedEvent;
-use Hermes\Component\Broadcast\Exception\AddressNotFoundException;
-use Hermes\Component\Broadcast\Model\ChannelInterface;
+use Hermes\Component\Broadcast\Factory\SubscriptionFactory;
 use Hermes\Component\Broadcast\Model\MessageInterface;
 use Hermes\Component\Broadcast\Model\ReceiverInterface;
-use Hermes\Component\Broadcast\Model\Subscription;
+use Hermes\Component\Broadcast\Model\SubscriptionInterface;
 use Hermes\Component\Broadcast\Model\TransportInterface;
-use Hermes\Component\Broadcast\Repository\ChannelRepository;
-use Hermes\Component\Broadcast\Repository\TransportRepository;
+use Hermes\Component\Broadcast\Repository\SubscriptionRepositoryInterface;
+use Hermes\Component\Broadcast\Repository\TransportRepositoryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class Broadcaster
 {
     /**
-     * @var TransportRepository
+     * @var TransportRepositoryInterface
      */
     protected $transportRepository;
 
     /**
-     * @var ChannelRepository
+     * @var SubscriptionRepositoryInterface
      */
-    protected $channelRepository;
+    protected $subscriptionRepository;
+
+    /**
+     * @var SubscriptionFactory
+     */
+    protected $subscriptionFactory;
 
     /**
      * @var EventDispatcher
@@ -48,74 +54,62 @@ class Broadcaster
     /**
      * Broadcaster constructor.
      *
-     * @param TransportRepository $transportRepository
-     * @param ChannelRepository   $channelRepository
-     * @param EventDispatcher     $eventDispatcher
+     * @param TransportRepositoryInterface $transportRepository
+     * @param SubscriptionRepositoryInterface $subscriptionRepository
+     * @param SubscriptionFactory $subscriptionFactory
+     * @param EventDispatcher $eventDispatcher
      */
     public function __construct(
-        TransportRepository $transportRepository,
-        ChannelRepository $channelRepository,
+        TransportRepositoryInterface $transportRepository,
+        SubscriptionRepositoryInterface $subscriptionRepository,
+        SubscriptionFactory $subscriptionFactory,
         EventDispatcher $eventDispatcher
-    ) {
+    )
+    {
         $this->transportRepository = $transportRepository;
-        $this->channelRepository = $channelRepository;
+        $this->subscriptionRepository = $subscriptionRepository;
         $this->eventDispatcher = $eventDispatcher;
-    }
-
-    /**
-     * @param TransportInterface $transport
-     */
-    public function addTransport(TransportInterface $transport)
-    {
-        $this->transportRepository->add($transport);
-    }
-
-    /**
-     * @param ChannelInterface $channel
-     */
-    public function addChannel(ChannelInterface $channel)
-    {
-        $this->channelRepository->add($channel);
+        $this->subscriptionFactory = $subscriptionFactory;
     }
 
     /**
      * @param ReceiverInterface $receiver
-     * @param $transportName
-     * @param $channelName
-     *
-     * @throws AddressNotFoundException
+     * @param $transportId
+     * @param $channelId
      */
-    public function subscribe(ReceiverInterface $receiver, $transportName, $channelName)
+    public function subscribe(ReceiverInterface $receiver, $transportId, $channelId, $lifetime)
     {
-        try {
-            $address = $receiver->getAddressByTransport($transportName);
-            $subscription = new Subscription($address, $transportName);
-
-            $this->eventDispatcher->dispatch('hermes.broadcast.channel.subscription.started', new SubscriptionStartedEvent($subscription));
-
-            $eventDispatcher = $this->eventDispatcher;
-            $this->channelRepository->findOneOrCreate($channelName, function (ChannelInterface $channel) use ($eventDispatcher) {
-                $eventDispatcher->dispatch('hermes.broadcast.channel.create', new ChannelCreatedEvent($channel));
-            })->addSubscription($subscription);
-
-            $this->eventDispatcher->dispatch('hermes.broadcast.channel.subscription.ended', new SubscriptionEndedEvent($subscription));
-        } catch (AddressNotFoundException $exception) {
-            throw new AddressNotFoundException(sprintf("I can't subscribe this receiver because it have not a valid address for %s transport", $transportName));
-        }
+        $subscription = $this->subscriptionFactory->create($receiver, $transportId, $channelId, $lifetime);
+        $this->eventDispatcher->dispatch(SubscriptionEvent::STARTED, new SubscriptionStartedEvent($subscription));
+        $this->subscriptionRepository->add($subscription);
+        $this->eventDispatcher->dispatch(SubscriptionEvent::ENDED, new SubscriptionEndedEvent($subscription));
     }
 
-    public function broadcast(MessageInterface $message, $channelName)
+
+    /**
+     * @param MessageInterface $message
+     * @param $channelId
+     * @param null $allowedTransports if null send on all transports
+     */
+    public function broadcast(MessageInterface $message, $channelId, $allowedTransports = null)
     {
-        //todo: to be implemented
+        $this->eventDispatcher->dispatch(BroadcastEvent::STARTED, new BroadcastEvent($message, $channelId));
 
-        //nei transport spool butto i messaggi
+        $transports = $this->transportRepository->getByTransportIds($allowedTransports);
 
-        //spullo i transport
-        //$channel->getSubscriptionsByTransport()
+        array_map(function (TransportInterface $transport) use ($message, $channelId) {
+            $subscriptions = $this->subscriptionRepository->findByChannelAndTransport($channelId, $transport);
+            array_map(function (SubscriptionInterface $subscription) use ($message, $transport, $channelId) {
+                $this->eventDispatcher->dispatch(BroadcastEvent::PREPARED_FOR_QUEUE, new MessageQueuedEvent($message, $channelId, $transport));
+                $transport->queue($subscription, $message);
+                $this->eventDispatcher->dispatch(BroadcastEvent::QUEUED, new MessageQueuedEvent($message, $channelId, $transport));
+            }, $subscriptions);
+        }, $transports);
+        $this->eventDispatcher->dispatch(BroadcastEvent::ENDED, new BroadcastEvent($message, $channelId));
     }
 
     public function flush()
     {
-        //todo: to be implemented
+        //flush only one transport
     }
 }

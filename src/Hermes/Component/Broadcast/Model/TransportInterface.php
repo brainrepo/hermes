@@ -18,5 +18,12 @@ namespace Hermes\Component\Broadcast\Model;
 interface TransportInterface
 {
     public function send();
-    public function getName();
+    public function getId();
+
+
+    /**
+     * @param SubscriptionInterface $subscriptions
+     * @param MessageInterface $message
+     */
+    public function queue(SubscriptionInterface $subscriptions, MessageInterface $message);
 }

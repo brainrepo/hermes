@@ -16,18 +16,17 @@
 namespace Hermes\Component\Broadcast\Repository;
 
 use Doctrine\Common\Persistence\ObjectRepository;
-use Hermes\Component\Broadcast\Model\ChannelInterface;
+use Hermes\Component\Broadcast\Model\TransportInterface;
 
-interface ChannelRepository extends ObjectRepository
+interface TransportRepositoryInterface extends ObjectRepository
 {
-    public function add(ChannelInterface $channel);
-    public function getById($identifier);
+    public function add(TransportInterface $transport);
+    public function getById($argument1);
 
     /**
-     * @param $identifier
-     * @param \Closure $callback
-     *
-     * @return ChannelInterface
+     * Return by transports id, if is null return all transports
+     * @param array $transportIds
+     * @return array
      */
-    public function findOneOrCreate($identifier, \Closure $callback);
+    public function getByTransportIds($transportIds = null);
 }

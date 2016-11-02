@@ -15,14 +15,16 @@
 
 namespace spec\Hermes\Component\Broadcast;
 
-use Hermes\Component\Broadcast\Exception\AddressNotFoundException;
-use Hermes\Component\Broadcast\Model\AddressInterface;
-use Hermes\Component\Broadcast\Model\ChannelInterface;
+use Hermes\Component\Broadcast\Broadcaster;
+use Hermes\Component\Broadcast\Event\BroadcastEvent;
+use Hermes\Component\Broadcast\Event\SubscriptionEvent;
+use Hermes\Component\Broadcast\Factory\SubscriptionFactory;
 use Hermes\Component\Broadcast\Model\MessageInterface;
 use Hermes\Component\Broadcast\Model\ReceiverInterface;
+use Hermes\Component\Broadcast\Model\SubscriptionInterface;
 use Hermes\Component\Broadcast\Model\TransportInterface;
-use Hermes\Component\Broadcast\Repository\ChannelRepository;
-use Hermes\Component\Broadcast\Repository\TransportRepository;
+use Hermes\Component\Broadcast\Repository\SubscriptionRepositoryInterface;
+use Hermes\Component\Broadcast\Repository\TransportRepositoryInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -31,64 +33,71 @@ class BroadcasterSpec extends ObjectBehavior
 {
     public function it_is_initializable()
     {
-        $this->shouldHaveType('Hermes\Component\Broadcast\Broadcaster');
+        $this->shouldHaveType(Broadcaster::class);
     }
 
-    public function let(TransportInterface $transport,
-                 ChannelInterface $channel,
-                 TransportRepository $transportRepository,
-                 ChannelRepository $channelRepository,
-                 EventDispatcher $eventDispatcher
-    ) {
-        $channel->getName()->willReturn('soccer_team');
-        $channel->addSubscription(Argument::any())->willReturn();
-        $channelRepository->getById('soccer_team')->willReturn($channel);
-        $channelRepository->add(Argument::any())->willReturn();
-
-        $transport->getName()->willReturn('ios.push_notification');
-        $transportRepository->add(Argument::any())->willReturn();
-        $transportRepository->getById('ios.push_notification')->willReturn($transport);
-
-        $this->beConstructedWith($transportRepository, $channelRepository, $eventDispatcher);
-    }
-
-    public function it_can_add_transport(TransportInterface $transport1)
+    public function let(
+        TransportRepositoryInterface $transportRepository,
+        SubscriptionRepositoryInterface $subscriptionRepository,
+        EventDispatcher $eventDispatcher,
+        SubscriptionFactory $subscriptionFactory,
+        TransportInterface $transportSms,
+        TransportInterface $transportEmail
+    )
     {
-        $this->addTransport($transport1);
+        $this->beConstructedWith($transportRepository, $subscriptionRepository, $subscriptionFactory, $eventDispatcher);
     }
 
-    public function it_can_add_channel(ChannelInterface $channel1)
+    public function it_can_subscribe(SubscriptionFactory $subscriptionFactory, ReceiverInterface $receiver, SubscriptionInterface $subscription, EventDispatcher $eventDispatcher)
     {
-        $this->addChannel($channel1);
+        $subscriptionFactory->create($receiver, 'ios.push_notification', 'brainrepo_soccer_friends', 153723263)->willReturn($subscription);
+        $this->subscribe($receiver, 'ios.push_notification', 'brainrepo_soccer_friends', 153723263);
+        $eventDispatcher->dispatch(SubscriptionEvent::STARTED, Argument::any())->shouldHaveBeenCalled();
+        $eventDispatcher->dispatch(SubscriptionEvent::ENDED, Argument::any())->shouldHaveBeenCalled();
     }
 
-    public function it_can_subscribe(
-        ReceiverInterface $receiver,
-        ChannelInterface $channel,
-        ChannelRepository $channelRepository,
-        AddressInterface $address,
-        EventDispatcher $eventDispatcher
-    ) {
-        $channelRepository->findOneOrCreate('soccer_team', Argument::any())->willReturn($channel);
-        $receiver->getAddressByTransport('ios.push_notification')->willReturn($address);
-        $eventDispatcher->dispatch('hermes.broadcast.channel.subscription.started', Argument::any())->shouldBeCalled();
-        $eventDispatcher->dispatch('hermes.broadcast.channel.subscription.ended', Argument::any())->shouldBeCalled();
-        $channel->addSubscription(Argument::any(), Argument::any())->shouldBeCalled();
-
-        //Todo: find a method to define the callback to check $eventDispatcher->dispatch('hermes.broadcast.channel.create', Argument::any())->shouldBeCalled();
-        $this->subscribe($receiver, 'ios.push_notification', 'soccer_team');
-    }
-
-    public function it_can_fail_subscribing_an_user_without_correct_address(ReceiverInterface $receiver, ChannelInterface $channel)
+    public function it_can_broadcast_on_all_tranports(
+        MessageInterface $message,
+        EventDispatcher $eventDispatcher,
+        TransportRepositoryInterface $transportRepository,
+        SubscriptionRepositoryInterface $subscriptionRepository,
+        TransportInterface $transportSms,
+        TransportInterface $transportEmail,
+        SubscriptionInterface $subscription
+    )
     {
-        $receiver->getAddressByTransport('ios.push_notification')->willThrow(AddressNotFoundException::class);
-        $this->shouldThrow(AddressNotFoundException::class)->duringSubscribe($receiver,
-            'ios.push_notification', 'soccer_team');
+        $channelId = 'brainrepo_soccer_friends';
+        $transportRepository->getByTransportIds(null)->willReturn(array($transportSms, $transportEmail));
+        $subscriptionRepository->findByChannelAndTransport($channelId, $transportSms)->willReturn(array($subscription));
+        $subscriptionRepository->findByChannelAndTransport($channelId, $transportEmail)->willReturn(array());
+        $this->broadcast($message, $channelId, null);
+        $transportSms->queue($subscription, $message)->shouldHaveBeenCalled();
+        $transportEmail->queue($subscription, $message)->shouldNotHaveBeenCalled();
+        $eventDispatcher->dispatch(BroadcastEvent::STARTED, Argument::any())->shouldHaveBeenCalled();
+        $eventDispatcher->dispatch(BroadcastEvent::PREPARED_FOR_QUEUE, Argument::any())->shouldHaveBeenCalled();
+        $eventDispatcher->dispatch(BroadcastEvent::QUEUED, Argument::any())->shouldHaveBeenCalled();
+        $eventDispatcher->dispatch(BroadcastEvent::ENDED, Argument::any())->shouldHaveBeenCalled();
     }
 
-    //todo: to be completed
-    public function it_can_broadcast_messages(MessageInterface $message, TransportInterface $transport)
+    public function it_can_broadcast_on_only_one_transport(
+        MessageInterface $message,
+        EventDispatcher $eventDispatcher,
+        TransportRepositoryInterface $transportRepository,
+        SubscriptionRepositoryInterface $subscriptionRepository,
+        TransportInterface $transportPush,
+        TransportInterface $transportEmail,
+        SubscriptionInterface $subscription
+    )
     {
-        $this->broadcast($message, 'soccer_team');
+        $channelId = 'brainrepo_soccer_friends';
+        $transportRepository->getByTransportIds(array('ios.push_notification'))->willReturn(array($transportPush));
+        $subscriptionRepository->findByChannelAndTransport($channelId, $transportPush)->willReturn(array($subscription));
+        $this->broadcast($message, $channelId, array('ios.push_notification'));
+        $transportPush->queue($subscription, $message)->shouldHaveBeenCalled();
+        $transportEmail->queue($subscription, $message)->shouldNotHaveBeenCalled();
+        $eventDispatcher->dispatch(BroadcastEvent::STARTED, Argument::any())->shouldHaveBeenCalled();
+        $eventDispatcher->dispatch(BroadcastEvent::PREPARED_FOR_QUEUE, Argument::any())->shouldHaveBeenCalled();
+        $eventDispatcher->dispatch(BroadcastEvent::QUEUED, Argument::any())->shouldHaveBeenCalled();
+        $eventDispatcher->dispatch(BroadcastEvent::ENDED, Argument::any())->shouldHaveBeenCalled();
     }
 }
