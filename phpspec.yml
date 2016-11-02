@@ -12,7 +12,7 @@ suites:
     Broadcast:
         namespace: Hermes\Component\Broadcast
         spec_path: ./src/Hermes/Component/Broadcast
-        src_path: ./src/Hermes/Component/Broadcast
+        src_path: ./src
 
 extensions:
     - PhpSpecCodeCoverage\CodeCoverageExtension
