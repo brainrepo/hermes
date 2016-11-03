@@ -111,9 +111,9 @@ class Broadcaster
     {
         $this->eventDispatcher->dispatch(BroadcastFlushEvent::STARTED, new BroadcastFlushEvent(null));
         array_map(function (TransportInterface $transport) {
-            $this->eventDispatcher->dispatch(BroadcastFlushEvent::PREPARED_FOR_FLUSH, new BroadcastFlushEvent(null));
+            $this->eventDispatcher->dispatch(BroadcastFlushEvent::PREPARED_FOR_FLUSH, new BroadcastFlushEvent($transport));
             $transport->flush();
-            $this->eventDispatcher->dispatch(BroadcastFlushEvent::FLUSHED, new BroadcastFlushEvent(null));
+            $this->eventDispatcher->dispatch(BroadcastFlushEvent::FLUSHED, new BroadcastFlushEvent($transport));
         }, $this->transportRepository->findAll());
         $this->eventDispatcher->dispatch(BroadcastFlushEvent::ENDED, new BroadcastFlushEvent(null));
     }
