@@ -16,6 +16,7 @@
 namespace Hermes\Component\Broadcast;
 
 use Hermes\Component\Broadcast\Event\BroadcastEvent;
+use Hermes\Component\Broadcast\Event\BroadcastFlushEvent;
 use Hermes\Component\Broadcast\Event\MessageQueuedEvent;
 use Hermes\Component\Broadcast\Event\SubscriptionEndedEvent;
 use Hermes\Component\Broadcast\Event\SubscriptionEvent;
@@ -108,6 +109,12 @@ class Broadcaster
 
     public function flush()
     {
-        //flush only one transport
+        $this->eventDispatcher->dispatch(BroadcastFlushEvent::STARTED, new BroadcastFlushEvent(null));
+        array_map(function (TransportInterface $transport) {
+            $this->eventDispatcher->dispatch(BroadcastFlushEvent::PREPARED_FOR_FLUSH, new BroadcastFlushEvent(null));
+            $transport->flush();
+            $this->eventDispatcher->dispatch(BroadcastFlushEvent::FLUSHED, new BroadcastFlushEvent(null));
+        }, $this->transportRepository->findAll());
+        $this->eventDispatcher->dispatch(BroadcastFlushEvent::ENDED, new BroadcastFlushEvent(null));
     }
 }

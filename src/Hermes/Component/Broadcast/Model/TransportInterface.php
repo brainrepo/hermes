@@ -25,4 +25,6 @@ interface TransportInterface
      * @param MessageInterface      $message
      */
     public function queue(SubscriptionInterface $subscriptions, MessageInterface $message);
+
+    public function flush();
 }

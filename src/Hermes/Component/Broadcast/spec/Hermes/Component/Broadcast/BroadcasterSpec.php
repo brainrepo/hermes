@@ -17,6 +17,7 @@ namespace spec\Hermes\Component\Broadcast;
 
 use Hermes\Component\Broadcast\Broadcaster;
 use Hermes\Component\Broadcast\Event\BroadcastEvent;
+use Hermes\Component\Broadcast\Event\BroadcastFlushEvent;
 use Hermes\Component\Broadcast\Event\SubscriptionEvent;
 use Hermes\Component\Broadcast\Factory\SubscriptionFactory;
 use Hermes\Component\Broadcast\Model\MessageInterface;
@@ -40,9 +41,7 @@ class BroadcasterSpec extends ObjectBehavior
         TransportRepositoryInterface $transportRepository,
         SubscriptionRepositoryInterface $subscriptionRepository,
         EventDispatcher $eventDispatcher,
-        SubscriptionFactory $subscriptionFactory,
-        TransportInterface $transportSms,
-        TransportInterface $transportEmail
+        SubscriptionFactory $subscriptionFactory
     ) {
         $this->beConstructedWith($transportRepository, $subscriptionRepository, $subscriptionFactory, $eventDispatcher);
     }
@@ -96,5 +95,19 @@ class BroadcasterSpec extends ObjectBehavior
         $eventDispatcher->dispatch(BroadcastEvent::PREPARED_FOR_QUEUE, Argument::any())->shouldHaveBeenCalled();
         $eventDispatcher->dispatch(BroadcastEvent::QUEUED, Argument::any())->shouldHaveBeenCalled();
         $eventDispatcher->dispatch(BroadcastEvent::ENDED, Argument::any())->shouldHaveBeenCalled();
+    }
+
+    public function it_can_flush(TransportRepositoryInterface $transportRepository, TransportInterface $transportSms,
+                                 TransportInterface $transportEmail, EventDispatcher $eventDispatcher)
+    {
+        $transportRepository->findAll()->willReturn([$transportSms, $transportEmail]);
+
+        $this->flush();
+        $transportSms->flush()->shouldHaveBeenCalled();
+        $transportEmail->flush()->shouldHaveBeenCalled();
+        $eventDispatcher->dispatch(BroadcastFlushEvent::STARTED, Argument::any())->shouldHaveBeenCalled();
+        $eventDispatcher->dispatch(BroadcastFlushEvent::PREPARED_FOR_FLUSH, Argument::any())->shouldHaveBeenCalled();
+        $eventDispatcher->dispatch(BroadcastFlushEvent::FLUSHED, Argument::any())->shouldHaveBeenCalled();
+        $eventDispatcher->dispatch(BroadcastFlushEvent::ENDED, Argument::any())->shouldHaveBeenCalled();
     }
 }
