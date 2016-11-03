@@ -13,18 +13,18 @@
  * @author Mauro Murru Brainrepo <murru7@gmail.com>
  */
 
-namespace Hermes\Component\Broadcast\Model;
+namespace Hermes\Component\Broadcast\Receiver;
 
-interface TransportInterface
+use Hermes\Component\Broadcast\Exception\AddressNotFoundException;
+
+interface ReceiverInterface
 {
-    public function send();
-    public function getId();
-
     /**
-     * @param SubscriptionInterface $subscriptions
-     * @param MessageInterface      $message
+     * @param string $TransportName
+     *
+     * @return AddressInterface
+     *
+     * @throws AddressNotFoundException
      */
-    public function queue(SubscriptionInterface $subscriptions, MessageInterface $message);
-
-    public function flush();
+    public function getAddressByTransport($TransportName);
 }

@@ -16,7 +16,7 @@
 namespace Hermes\Component\Broadcast\Repository;
 
 use Doctrine\Common\Persistence\ObjectRepository;
-use Hermes\Component\Broadcast\Model\TransportInterface;
+use Hermes\Component\Broadcast\Transport\TransportInterface;
 
 interface TransportRepositoryInterface extends ObjectRepository
 {

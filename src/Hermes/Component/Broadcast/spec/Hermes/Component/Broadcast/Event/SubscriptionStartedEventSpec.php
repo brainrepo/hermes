@@ -16,7 +16,7 @@
 namespace spec\Hermes\Component\Broadcast\Event;
 
 use Hermes\Component\Broadcast\Event\SubscriptionStartedEvent;
-use Hermes\Component\Broadcast\Model\SubscriptionInterface;
+use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
 use PhpSpec\ObjectBehavior;
 
 class SubscriptionStartedEventSpec extends ObjectBehavior

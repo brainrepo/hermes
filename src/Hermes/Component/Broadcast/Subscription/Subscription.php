@@ -13,7 +13,9 @@
  * @author Mauro Murru Brainrepo <murru7@gmail.com>
  */
 
-namespace Hermes\Component\Broadcast\Model;
+namespace Hermes\Component\Broadcast\Subscription;
+
+use Hermes\Component\Broadcast\Receiver\AddressInterface;
 
 class Subscription implements SubscriptionInterface
 {

@@ -16,7 +16,7 @@
 namespace spec\Hermes\Component\Broadcast\Event;
 
 use Hermes\Component\Broadcast\Event\MessageQueuedEvent;
-use Hermes\Component\Broadcast\Model\MessageInterface;
+use Hermes\Component\Broadcast\Message\MessageInterface;
 use PhpSpec\ObjectBehavior;
 
 class MessageQueuedEventSpec extends ObjectBehavior

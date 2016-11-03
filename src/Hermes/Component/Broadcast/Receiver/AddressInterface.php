@@ -13,17 +13,8 @@
  * @author Mauro Murru Brainrepo <murru7@gmail.com>
  */
 
-namespace Hermes\Component\Broadcast\Model;
+namespace Hermes\Component\Broadcast\Receiver;
 
-interface SubscriptionInterface
+interface AddressInterface
 {
-    /**
-     * @return AddressInterface
-     */
-    public function getAddress();
-
-    /**
-     * @return string
-     */
-    public function getTransportId();
 }

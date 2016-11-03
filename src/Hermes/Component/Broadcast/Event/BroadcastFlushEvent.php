@@ -15,7 +15,7 @@
 
 namespace Hermes\Component\Broadcast\Event;
 
-use Hermes\Component\Broadcast\Model\TransportInterface;
+use Hermes\Component\Broadcast\Transport\TransportInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 class BroadcastFlushEvent extends Event

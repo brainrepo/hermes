@@ -15,7 +15,7 @@
 
 namespace Hermes\Component\Broadcast\Event;
 
-use Hermes\Component\Broadcast\Model\SubscriptionInterface;
+use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
 
 class SubscriptionStartedEvent extends SubscriptionEvent
 {

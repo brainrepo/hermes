@@ -13,24 +13,21 @@
  * @author Mauro Murru Brainrepo <murru7@gmail.com>
  */
 
-namespace Hermes\Component\Broadcast\Event;
+namespace Hermes\Component\Broadcast\Transport;
 
+use Hermes\Component\Broadcast\Message\MessageInterface;
 use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
 
-class SubscriptionEndedEvent extends SubscriptionEvent
+interface TransportInterface
 {
-    /**
-     * @var SubscriptionInterface
-     */
-    protected $subscription;
+    public function send();
+    public function getId();
 
     /**
-     * ChannelEvent constructor.
-     *
-     * @param SubscriptionInterface $subscription
+     * @param SubscriptionInterface $subscriptions
+     * @param MessageInterface      $message
      */
-    public function __construct(SubscriptionInterface $subscription)
-    {
-        $this->subscription = $subscription;
-    }
+    public function queue(SubscriptionInterface $subscriptions, MessageInterface $message);
+
+    public function flush();
 }

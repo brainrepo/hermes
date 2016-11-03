@@ -15,8 +15,8 @@
 
 namespace Hermes\Component\Broadcast\Repository;
 
-use Hermes\Component\Broadcast\Model\SubscriptionInterface;
-use Hermes\Component\Broadcast\Model\TransportInterface;
+use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
+use Hermes\Component\Broadcast\Transport\TransportInterface;
 
 interface SubscriptionRepositoryInterface
 {

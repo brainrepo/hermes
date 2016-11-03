@@ -15,7 +15,7 @@
 
 namespace Hermes\Component\Broadcast\Event;
 
-use Hermes\Component\Broadcast\Model\MessageInterface;
+use Hermes\Component\Broadcast\Message\MessageInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 class BroadcastEvent extends Event

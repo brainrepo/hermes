@@ -15,8 +15,8 @@
 
 namespace Hermes\Component\Broadcast\Factory;
 
-use Hermes\Component\Broadcast\Model\ReceiverInterface;
-use Hermes\Component\Broadcast\Model\SubscriptionInterface;
+use Hermes\Component\Broadcast\Receiver\ReceiverInterface;
+use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
 
 interface SubscriptionFactory
 {

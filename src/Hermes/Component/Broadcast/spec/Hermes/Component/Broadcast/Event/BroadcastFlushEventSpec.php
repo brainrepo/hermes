@@ -16,7 +16,7 @@
 namespace spec\Hermes\Component\Broadcast\Event;
 
 use Hermes\Component\Broadcast\Event\BroadcastFlushEvent;
-use Hermes\Component\Broadcast\Model\TransportInterface;
+use Hermes\Component\Broadcast\Transport\TransportInterface;
 use PhpSpec\ObjectBehavior;
 
 class BroadcastFlushEventSpec extends ObjectBehavior

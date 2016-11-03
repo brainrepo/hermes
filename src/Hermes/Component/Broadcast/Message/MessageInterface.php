@@ -13,16 +13,8 @@
  * @author Mauro Murru Brainrepo <murru7@gmail.com>
  */
 
-namespace Hermes\Component\Broadcast\Model;
+namespace Hermes\Component\Broadcast\Message;
 
-interface ReceiverInterface
+interface MessageInterface
 {
-    /**
-     * @param string $TransportName
-     *
-     * @return AddressInterface
-     *
-     * @throws AddressNotFoundException
-     */
-    public function getAddressByTransport($TransportName);
 }

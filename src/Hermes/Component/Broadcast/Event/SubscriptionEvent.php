@@ -15,7 +15,7 @@
 
 namespace Hermes\Component\Broadcast\Event;
 
-use Hermes\Component\Broadcast\Model\SubscriptionInterface;
+use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 class SubscriptionEvent extends Event

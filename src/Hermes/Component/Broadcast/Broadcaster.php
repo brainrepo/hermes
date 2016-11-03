@@ -22,12 +22,12 @@ use Hermes\Component\Broadcast\Event\SubscriptionEndedEvent;
 use Hermes\Component\Broadcast\Event\SubscriptionEvent;
 use Hermes\Component\Broadcast\Event\SubscriptionStartedEvent;
 use Hermes\Component\Broadcast\Factory\SubscriptionFactory;
-use Hermes\Component\Broadcast\Model\MessageInterface;
-use Hermes\Component\Broadcast\Model\ReceiverInterface;
-use Hermes\Component\Broadcast\Model\SubscriptionInterface;
-use Hermes\Component\Broadcast\Model\TransportInterface;
+use Hermes\Component\Broadcast\Message\MessageInterface;
+use Hermes\Component\Broadcast\Receiver\ReceiverInterface;
 use Hermes\Component\Broadcast\Repository\SubscriptionRepositoryInterface;
 use Hermes\Component\Broadcast\Repository\TransportRepositoryInterface;
+use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
+use Hermes\Component\Broadcast\Transport\TransportInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class Broadcaster
