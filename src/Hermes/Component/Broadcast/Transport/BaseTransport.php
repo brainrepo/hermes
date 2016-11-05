@@ -15,27 +15,41 @@
 
 namespace Hermes\Component\Broadcast\Transport;
 
+use Hermes\Component\Broadcast\Exception\ProviderNotCompatibleException;
 use Hermes\Component\Broadcast\Message\MessageInterface;
 use Hermes\Component\Broadcast\Message\RawMessageInterface;
 use Hermes\Component\Broadcast\Provider\ProviderInterface;
 use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
 
-abstract class BaseTransport implements TransportInterface
+class BaseTransport implements TransportInterface
 {
     /**
      * @var ProviderInterface[]
      */
     protected $providers = [];
 
+    /**
+     * @var array[]
+     */
     protected $messages = [];
 
     /**
-     * @param SubscriptionInterface $subscriptions
-     * @param MessageInterface $message
+     * BaseTransport constructor.
+     *
+     * @param \Hermes\Component\Broadcast\Provider\ProviderInterface[] $providers
      */
-    public function queue(SubscriptionInterface $subscriptions, MessageInterface $message)
+    public function __construct(array $providers)
     {
-        $address = $subscriptions->getAddress();
+        $this->providers = $providers;
+    }
+
+    /**
+     * @param SubscriptionInterface $subscriptions
+     * @param MessageInterface      $message
+     */
+    public function queue(SubscriptionInterface $subscription, MessageInterface $message)
+    {
+        $address = $subscription->getAddress();
         $rawMessage = $this->adaptMessage($message);
         if ($rawMessage) {
             $this->messages[] = [$address, $rawMessage, md5(json_encode($rawMessage))];
@@ -46,9 +60,21 @@ abstract class BaseTransport implements TransportInterface
     {
         $compactedMessages = $this->compactMessages();
         array_map(function ($message) {
-            $this->getProvider()->send($message['message'], $message['address']);
-         }, $compactedMessages);
+            $this->getProvider()->send($message['message'], $message['addresses']);
+        }, $compactedMessages);
+    }
 
+    /**
+     * @param ProviderInterface $provider
+     *
+     * @throws ProviderNotCompatibleException
+     */
+    public function addProvider(ProviderInterface $provider)
+    {
+        if (!($provider->getTransportClass() === self::class)) {
+            throw new ProviderNotCompatibleException(sprintf('You are trying to add a provider which support %s transport to a %s.', $provider->getTransportClass(),  self::class));
+        }
+        $this->providers[] = $provider;
     }
 
     /**
@@ -56,20 +82,10 @@ abstract class BaseTransport implements TransportInterface
      *
      * @return RawMessageInterface
      */
-    public function adaptMessage(MessageInterface $message)
+    private function adaptMessage(MessageInterface $message)
     {
         //todo: if there us not specific message use translator
         return $message->getMessageByTransport(self::class);
-    }
-
-    /**
-     * @param ProviderInterface $provider
-     */
-    public function addProvider(ProviderInterface $provider)
-    {
-        if ($provider->getTransportClass() === self::class) {
-            $this->providers[] = $provider;
-        }
     }
 
     /**
@@ -79,16 +95,16 @@ abstract class BaseTransport implements TransportInterface
     {
         $compactedMessages = [];
         foreach ($this->messages as $message) {
-            if (!is_array($compactedMessages[$message[2]])) {
+            if (!key_exists($message[2], $compactedMessages) || (!is_array($compactedMessages[$message[2]]))) {
                 $compactedMessages[$message[2]] = [];
-                $compactedMessages[$message[2]]['message'] = [$message];
+                $compactedMessages[$message[2]]['message'] = $message[1];
                 $compactedMessages[$message[2]]['addresses'] = [];
             }
-            $compactedMessages[$message[2]]['addresses'][] = $message[1];
+            $compactedMessages[$message[2]]['addresses'][] = $message[0];
         }
+
         return $compactedMessages;
     }
-
 
     private function getProvider()
     {

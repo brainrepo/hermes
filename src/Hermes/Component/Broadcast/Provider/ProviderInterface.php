@@ -25,7 +25,8 @@ interface ProviderInterface
     //TODO: define specific address for transport
     /**
      * @param RawMessageInterface $messageInterface
-     * @param AddressInterface[] $address
+     * @param AddressInterface[]  $address
+     *
      * @return mixed
      */
     public function send(RawMessageInterface $messageInterface, $address);
