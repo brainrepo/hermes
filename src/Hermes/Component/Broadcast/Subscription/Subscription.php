@@ -42,6 +42,8 @@ class Subscription implements SubscriptionInterface
     }
 
     /**
+     * Return the address for the specific transports.
+     *
      * @return AddressInterface
      */
     public function getAddress()

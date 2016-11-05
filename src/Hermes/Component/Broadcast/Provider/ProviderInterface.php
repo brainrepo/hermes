@@ -13,21 +13,20 @@
  * @author Mauro Murru Brainrepo <murru7@gmail.com>
  */
 
-namespace Hermes\Component\Broadcast\Subscription;
+namespace Hermes\Component\Broadcast\Provider;
 
+use Hermes\Component\Broadcast\Message\RawMessageInterface;
 use Hermes\Component\Broadcast\Receiver\AddressInterface;
 
-interface SubscriptionInterface
+interface ProviderInterface
 {
-    /**
-     * Get specific address fot this transport method subscription.
-     *
-     * @return AddressInterface
-     */
-    public function getAddress();
+    public function getTransportClass();
 
+    //TODO: define specific address for transport
     /**
-     * @return string
+     * @param RawMessageInterface $messageInterface
+     * @param AddressInterface[] $address
+     * @return mixed
      */
-    public function getTransportId();
+    public function send(RawMessageInterface $messageInterface, $address);
 }

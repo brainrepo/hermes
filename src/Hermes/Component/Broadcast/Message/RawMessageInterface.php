@@ -15,18 +15,6 @@
 
 namespace Hermes\Component\Broadcast\Message;
 
-interface MessageInterface
+interface RawMessageInterface
 {
-    /**
-     * @param string $transportClass
-     *
-     * @return RawMessageInterface
-     */
-    public function getMessageByTransport($transportClass);
-
-    /**
-     * @param RawMessageInterface $message
-     * @param string              $transportId
-     */
-    public function addMessage(RawMessageInterface $message, $transportId);
 }

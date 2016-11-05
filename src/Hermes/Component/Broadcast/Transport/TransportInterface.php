@@ -16,18 +16,20 @@
 namespace Hermes\Component\Broadcast\Transport;
 
 use Hermes\Component\Broadcast\Message\MessageInterface;
+use Hermes\Component\Broadcast\Provider\ProviderInterface;
 use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
 
 interface TransportInterface
 {
-    public function send();
-    public function getId();
-
     /**
      * @param SubscriptionInterface $subscriptions
      * @param MessageInterface      $message
      */
     public function queue(SubscriptionInterface $subscriptions, MessageInterface $message);
 
-    public function flush();
+    /**
+     * @param bool $compact
+     */
+    public function flush($compact = false);
+    public function addProvider(ProviderInterface $provider);
 }
