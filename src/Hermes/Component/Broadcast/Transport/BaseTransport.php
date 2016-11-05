@@ -44,7 +44,7 @@ class BaseTransport implements TransportInterface
     }
 
     /**
-     * @param SubscriptionInterface $subscriptions
+     * @param SubscriptionInterface $subscription
      * @param MessageInterface      $message
      */
     public function queue(SubscriptionInterface $subscription, MessageInterface $message)
