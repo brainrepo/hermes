@@ -71,7 +71,7 @@ class BaseTransportSpec extends ObjectBehavior
         $message->getMessageByTransport(Argument::any())->willReturn($rawMessage);
         $subscription->getAddress()->willReturn($address);
         $this->queue($subscription, $message);
-        $this->flush();
-        $provider->send($rawMessage, [$address])->shouldBeCalled();
+        $this->flush(3);
+        $provider->send($rawMessage, [$address], 3)->shouldBeCalled();
     }
 }
