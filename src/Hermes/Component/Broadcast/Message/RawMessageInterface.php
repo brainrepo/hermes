@@ -17,4 +17,5 @@ namespace Hermes\Component\Broadcast\Message;
 
 interface RawMessageInterface
 {
+    public function getText();
 }

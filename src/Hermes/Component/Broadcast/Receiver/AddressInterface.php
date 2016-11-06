@@ -17,4 +17,5 @@ namespace Hermes\Component\Broadcast\Receiver;
 
 interface AddressInterface
 {
+    public function getMobilePhoneNumber();
 }
