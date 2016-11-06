@@ -26,7 +26,7 @@ interface ProviderInterface
     /**
      * @param RawMessageInterface $messageInterface
      * @param AddressInterface[]  $addresses
-     * @param int $attempts
+     * @param int                 $attempts
      */
     public function send(RawMessageInterface $messageInterface, $addresses, $attempts = 3);
 }

@@ -57,14 +57,12 @@ class NexmoSmsProvider implements ProviderInterface
 
     /**
      * @param RawMessageInterface $message
-     * @param AddressInterface[] $addresses
-     * @param int $attempts
+     * @param AddressInterface[]  $addresses
+     * @param int                 $attempts
      */
     public function send(RawMessageInterface $message, $addresses, $attempts = 3)
     {
-
-        for ($i = 0; $i < $attempts; $i++) {
-            print "attempt".$i."\n";
+        for ($i = 0; $i < $attempts; ++$i) {
             foreach ($addresses as $address) {
                 $url = $this::NEXMO_REST_URL . http_build_query(
                         [
@@ -83,7 +81,6 @@ class NexmoSmsProvider implements ProviderInterface
                 if ($response != null && $response->messages[0]->status == 0) {
                     unset($address);
                 }
-
             }
         }
     }

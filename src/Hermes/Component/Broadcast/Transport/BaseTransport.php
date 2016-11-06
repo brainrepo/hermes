@@ -62,7 +62,7 @@ class BaseTransport implements TransportInterface
     public function flush($attempts = 3)
     {
         $compactedMessages = $this->compactMessages();
-        array_map(function ($message) use ($attempts){
+        array_map(function ($message) use ($attempts) {
             $this->getProvider()->send($message['message'], $message['addresses'], $attempts);
         }, $compactedMessages);
     }
