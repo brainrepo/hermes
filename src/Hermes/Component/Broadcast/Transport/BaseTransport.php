@@ -17,11 +17,10 @@ namespace Hermes\Component\Broadcast\Transport;
 
 use Hermes\Component\Broadcast\Exception\ProviderNotCompatibleException;
 use Hermes\Component\Broadcast\Message\MessageInterface;
-use Hermes\Component\Broadcast\Message\RawMessageInterface;
 use Hermes\Component\Broadcast\Provider\ProviderInterface;
 use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
 
-class BaseTransport implements TransportInterface
+abstract class BaseTransport implements TransportInterface
 {
     /**
      * @var ProviderInterface[]
@@ -75,20 +74,9 @@ class BaseTransport implements TransportInterface
     public function addProvider(ProviderInterface $provider)
     {
         if (!($provider->getTransportClass() === self::class)) {
-            throw new ProviderNotCompatibleException(sprintf('You are trying to add a provider which support %s transport to a %s.', $provider->getTransportClass(),  self::class));
+            throw new ProviderNotCompatibleException(sprintf('You are trying to add a provider which support %s transport to a %s.', $provider->getTransportClass(), self::class));
         }
         $this->providers[] = $provider;
-    }
-
-    /**
-     * @param $message
-     *
-     * @return RawMessageInterface
-     */
-    private function adaptMessage(MessageInterface $message)
-    {
-        //todo: if there us not specific message use translator
-        return $message->getMessageByTransport(self::class);
     }
 
     /**
@@ -109,6 +97,9 @@ class BaseTransport implements TransportInterface
         return $compactedMessages;
     }
 
+    /**
+     * @return ProviderInterface
+     */
     private function getProvider()
     {
         //Implement an algorithm return function

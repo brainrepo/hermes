@@ -31,5 +31,9 @@ interface TransportInterface
      * @param bool $compact
      */
     public function flush($compact = false);
+
+    /**
+     * @param ProviderInterface $provider
+     */
     public function addProvider(ProviderInterface $provider);
 }

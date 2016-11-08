@@ -15,8 +15,22 @@
 
 namespace Hermes\Component\Broadcast\Sms;
 
+use Hermes\Component\Broadcast\Message\MessageInterface;
 use Hermes\Component\Broadcast\Transport\BaseTransport;
 
 class SmsTransport extends BaseTransport
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected function adaptMessage(MessageInterface $message)
+    {
+        $rawMessage = $message->getMessageByTransport(self::class);
+
+        if (!$rawMessage) {
+            $rawMessage = new SmsMessage($message->getText());
+        }
+
+        return $rawMessage;
+    }
 }
