@@ -38,23 +38,16 @@ class SmsTransportSpec extends ObjectBehavior
         $this->beConstructedWith([$provider]);
     }
 
-    public function it_can_queue_message(
-        SubscriptionInterface $subscription,
-        AddressInterface $address,
-        MessageInterface $message,
-        RawMessageInterface $rawMessage
-    ) {
+    public function it_can_queue_message(SubscriptionInterface $subscription, AddressInterface $address, MessageInterface $message, RawMessageInterface $rawMessage)
+    {
         $message->getMessageByTransport(SmsTransport::class)->willReturn($rawMessage); //??
         $subscription->getAddress()->willReturn($address);
 
         $this->queue($subscription, $message);
     }
 
-    public function it_can_queue_adapted_message(
-        SubscriptionInterface $subscription,
-        AddressInterface $address,
-        MessageInterface $message
-    ) {
+    public function it_can_queue_adapted_message(SubscriptionInterface $subscription, AddressInterface $address, MessageInterface $message)
+    {
         $message->getText()->willReturn('text');
         $message->getMessageByTransport(SmsTransport::class)->willReturn(null);
         $subscription->getAddress()->willReturn($address);

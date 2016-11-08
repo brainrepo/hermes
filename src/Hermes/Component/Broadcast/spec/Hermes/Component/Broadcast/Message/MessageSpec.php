@@ -27,7 +27,7 @@ class MessageSpec extends ObjectBehavior
         $this->shouldHaveType(Message::class);
     }
 
-    public function let(TransportInterface $transport)
+    public function let()
     {
         $this->beConstructedWith('text message');
     }
@@ -37,14 +37,14 @@ class MessageSpec extends ObjectBehavior
         $this->getText()->shouldReturn('text message');
     }
 
-    public function it_can_get_message_by_transport(RawMessageInterface $rawMessage, TransportInterface $transport)
+    public function it_can_get_message_by_transport(RawMessageInterface $rawMessage)
     {
         $this->addMessage($rawMessage, TransportInterface::class);
         $this->getMessageByTransport(TransportInterface::class)->shouldReturn($rawMessage);
         $this->getMessageByTransport(self::class)->shouldReturn(null);
     }
 
-    public function it_can_get_null_if_rawmessage_for_this_transport_is_not_loaded(RawMessageInterface $rawMessage, TransportInterface $transport)
+    public function it_can_get_null_if_rawmessage_for_this_transport_is_not_loaded(RawMessageInterface $rawMessage)
     {
         $this->addMessage($rawMessage, TransportInterface::class);
         $this->getMessageByTransport(TransportInterface::class)->shouldReturn($rawMessage);
