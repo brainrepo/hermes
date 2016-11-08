@@ -26,7 +26,12 @@ interface MessageInterface
 
     /**
      * @param RawMessageInterface $message
-     * @param string              $transportId
+     * @param string              $transportClass
      */
-    public function addMessage(RawMessageInterface $message, $transportId);
+    public function addMessage(RawMessageInterface $message, $transportClass);
+
+    /**
+     * @return string
+     */
+    public function getText();
 }

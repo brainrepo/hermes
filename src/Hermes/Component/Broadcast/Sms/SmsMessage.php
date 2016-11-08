@@ -1,16 +1,17 @@
 <?php
 
-/**
+/*
+ * This file is part of the Hermes package.
  *
- *  This file is part of the Hermes package.
+ * Copyright (c) 2014-2016 Mauro Murru Brainrepo
  *
- *  (c) Mauro Murru (Brainrepo) <murru7@gmail.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  *
- *  For the full copyright and license information, please view the LICENSE
- *  file that was distributed with this source code.
+ * Feel free to edit as you please, and have fun.
  *
+ * @author Mauro Murru Brainrepo <murru7@gmail.com>
  */
-
 
 namespace Hermes\Component\Broadcast\Sms;
 
@@ -25,6 +26,7 @@ class SmsMessage implements RawMessageInterface
 
     /**
      * SmsMessage constructor.
+     *
      * @param string $text
      */
     public function __construct($text)

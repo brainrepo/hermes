@@ -15,8 +15,16 @@
 
 namespace spec\Hermes\Component\Broadcast\Sms;
 
+use Hermes\Component\Broadcast\Exception\ProviderNotCompatibleException;
+use Hermes\Component\Broadcast\Message\MessageInterface;
+use Hermes\Component\Broadcast\Message\RawMessageInterface;
+use Hermes\Component\Broadcast\Provider\ProviderInterface;
+use Hermes\Component\Broadcast\Receiver\AddressInterface;
 use Hermes\Component\Broadcast\Sms\SmsTransport;
+use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
+use Hermes\Component\Broadcast\Transport\BaseTransport;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 
 class SmsTransportSpec extends ObjectBehavior
 {
@@ -25,8 +33,58 @@ class SmsTransportSpec extends ObjectBehavior
         $this->shouldHaveType(SmsTransport::class);
     }
 
-    public function let()
+    public function let(ProviderInterface $provider)
     {
-        $this->beConstructedWith([]);
+        $this->beConstructedWith([$provider]);
+    }
+
+    public function it_can_queue_message(
+        SubscriptionInterface $subscription,
+        AddressInterface $address,
+        MessageInterface $message,
+        RawMessageInterface $rawMessage
+    ) {
+        $message->getMessageByTransport(SmsTransport::class)->willReturn($rawMessage); //??
+        $subscription->getAddress()->willReturn($address);
+
+        $this->queue($subscription, $message);
+    }
+
+    public function it_can_queue_adapted_message(
+        SubscriptionInterface $subscription,
+        AddressInterface $address,
+        MessageInterface $message
+    ) {
+        $message->getText()->willReturn('text');
+        $message->getMessageByTransport(SmsTransport::class)->willReturn(null);
+        $subscription->getAddress()->willReturn($address);
+
+        $this->queue($subscription, $message);
+    }
+
+    public function it_can_add_provider(ProviderInterface $provider1)
+    {
+        $provider1->getTransportClass()->willReturn(BaseTransport::class);
+        $this->addProvider($provider1);
+    }
+
+    public function it_can_throw_exception_if_provider_is_not_compatible(ProviderInterface $provider)
+    {
+        $provider->getTransportClass()->willReturn(self::class);
+        $this->shouldThrow(ProviderNotCompatibleException::class)->duringAddProvider($provider);
+    }
+
+    public function it_can_flush(
+        ProviderInterface $provider,
+        SubscriptionInterface $subscription,
+        RawMessageInterface $rawMessage,
+        MessageInterface $message,
+        AddressInterface $address)
+    {
+        $message->getMessageByTransport(Argument::any())->willReturn($rawMessage);
+        $subscription->getAddress()->willReturn($address);
+        $this->queue($subscription, $message);
+        $this->flush(3);
+        $provider->send($rawMessage, [$address], 3)->shouldBeCalled();
     }
 }
