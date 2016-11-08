@@ -13,9 +13,9 @@
  * @author Mauro Murru Brainrepo <murru7@gmail.com>
  */
 
-namespace spec\Hermes\Component\Broadcast\Transport;
+namespace spec\Hermes\Component\Broadcast\Sms;
 
-use Hermes\Component\Broadcast\Transport\SmsTransport;
+use Hermes\Component\Broadcast\Sms\SmsTransport;
 use PhpSpec\ObjectBehavior;
 
 class SmsTransportSpec extends ObjectBehavior

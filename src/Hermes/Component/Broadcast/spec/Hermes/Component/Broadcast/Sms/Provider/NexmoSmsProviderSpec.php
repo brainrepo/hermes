@@ -13,12 +13,12 @@
  * @author Mauro Murru Brainrepo <murru7@gmail.com>
  */
 
-namespace spec\Hermes\Component\Broadcast\Provider;
+namespace spec\Hermes\Component\Broadcast\Sms\Provider;
 
 use Hermes\Component\Broadcast\Message\RawMessageInterface;
-use Hermes\Component\Broadcast\Provider\NexmoSmsProvider;
+use Hermes\Component\Broadcast\Sms\Provider\NexmoSmsProvider;
 use Hermes\Component\Broadcast\Receiver\AddressInterface;
-use Hermes\Component\Broadcast\Transport\SmsTransport;
+use Hermes\Component\Broadcast\Sms\SmsTransport;
 use PhpSpec\ObjectBehavior;
 
 class NexmoSmsProviderSpec extends ObjectBehavior

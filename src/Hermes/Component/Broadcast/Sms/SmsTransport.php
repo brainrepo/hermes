@@ -13,7 +13,9 @@
  * @author Mauro Murru Brainrepo <murru7@gmail.com>
  */
 
-namespace Hermes\Component\Broadcast\Transport;
+namespace Hermes\Component\Broadcast\Sms;
+
+use Hermes\Component\Broadcast\Transport\BaseTransport;
 
 class SmsTransport extends BaseTransport
 {
