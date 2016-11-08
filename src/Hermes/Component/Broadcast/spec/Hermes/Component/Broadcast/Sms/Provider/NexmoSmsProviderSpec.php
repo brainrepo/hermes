@@ -16,8 +16,8 @@
 namespace spec\Hermes\Component\Broadcast\Sms\Provider;
 
 use Hermes\Component\Broadcast\Message\RawMessageInterface;
-use Hermes\Component\Broadcast\Sms\Provider\NexmoSmsProvider;
 use Hermes\Component\Broadcast\Receiver\AddressInterface;
+use Hermes\Component\Broadcast\Sms\Provider\NexmoSmsProvider;
 use Hermes\Component\Broadcast\Sms\SmsTransport;
 use PhpSpec\ObjectBehavior;
 

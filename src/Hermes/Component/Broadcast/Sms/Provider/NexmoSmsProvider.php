@@ -58,8 +58,8 @@ class NexmoSmsProvider implements ProviderInterface
 
     /**
      * @param RawMessageInterface $message
-     * @param AddressInterface[] $addresses
-     * @param int $attempts
+     * @param AddressInterface[]  $addresses
+     * @param int                 $attempts
      */
     public function send(RawMessageInterface $message, $addresses, $attempts = 3)
     {
