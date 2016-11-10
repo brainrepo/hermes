@@ -93,6 +93,7 @@ class NexmoSmsProvider implements ProviderInterface
                 unset($address);
             }
         } catch (\Exception $e) {
+            //Do nothing, because the send method can try to send it in the next attempt.
         }
     }
 }
