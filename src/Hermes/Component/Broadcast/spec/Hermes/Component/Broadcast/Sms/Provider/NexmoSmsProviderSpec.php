@@ -16,8 +16,8 @@
 namespace spec\Hermes\Component\Broadcast\Sms\Provider;
 
 use Hermes\Component\Broadcast\Message\RawMessageInterface;
-use Hermes\Component\Broadcast\Receiver\AddressInterface;
 use Hermes\Component\Broadcast\Sms\Provider\NexmoSmsProvider;
+use Hermes\Component\Broadcast\Sms\SmsAddress;
 use Hermes\Component\Broadcast\Sms\SmsTransport;
 use PhpSpec\ObjectBehavior;
 
@@ -38,7 +38,7 @@ class NexmoSmsProviderSpec extends ObjectBehavior
         $this->getTransportClass()->shouldReturn(SmsTransport::class);
     }
 
-    public function it_can_send(RawMessageInterface $message, AddressInterface $address1, AddressInterface $address2)
+    public function it_can_send(RawMessageInterface $message, SmsAddress $address1, SmsAddress $address2)
     {
         $address1->getMobilePhoneNumber()->willReturn('393492977244');
         $address2->getMobilePhoneNumber()->willReturn('393405717382');

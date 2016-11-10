@@ -17,7 +17,7 @@ namespace Hermes\Component\Broadcast\Sms\Provider;
 
 use Hermes\Component\Broadcast\Message\RawMessageInterface;
 use Hermes\Component\Broadcast\Provider\ProviderInterface;
-use Hermes\Component\Broadcast\Receiver\AddressInterface;
+use Hermes\Component\Broadcast\Sms\SmsAddress;
 use Hermes\Component\Broadcast\Sms\SmsTransport;
 
 class NexmoSmsProvider implements ProviderInterface
@@ -58,7 +58,7 @@ class NexmoSmsProvider implements ProviderInterface
 
     /**
      * @param RawMessageInterface $message
-     * @param AddressInterface[]  $addresses
+     * @param SmsAddress[]        $addresses
      * @param int                 $attempts
      */
     public function send(RawMessageInterface $message, $addresses, $attempts = 3)
@@ -72,9 +72,9 @@ class NexmoSmsProvider implements ProviderInterface
 
     /**
      * @param RawMessageInterface $message
-     * @param $address
+     * @param SmsAddress          $address
      */
-    private function sendDataToServer(RawMessageInterface $message, $address)
+    private function sendDataToServer(RawMessageInterface $message, SmsAddress $address)
     {
         $url = $this::NEXMO_REST_URL . http_build_query(
                 [
