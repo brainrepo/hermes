@@ -22,7 +22,6 @@ interface ProviderInterface
 {
     public function getTransportClass();
 
-    //TODO: define specific address for transport
     /**
      * @param RawMessageInterface $messageInterface
      * @param AddressInterface[]  $addresses

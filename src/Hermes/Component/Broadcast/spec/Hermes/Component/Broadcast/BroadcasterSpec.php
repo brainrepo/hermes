@@ -19,15 +19,17 @@ use Hermes\Component\Broadcast\Broadcaster;
 use Hermes\Component\Broadcast\Event\BroadcastEvent;
 use Hermes\Component\Broadcast\Event\BroadcastFlushEvent;
 use Hermes\Component\Broadcast\Event\SubscriptionEvent;
-use Hermes\Component\Broadcast\Factory\SubscriptionFactory;
+use Hermes\Component\Broadcast\Exception\AddressNotFoundException;
 use Hermes\Component\Broadcast\Message\MessageInterface;
 use Hermes\Component\Broadcast\Receiver\ReceiverInterface;
 use Hermes\Component\Broadcast\Repository\SubscriptionRepositoryInterface;
 use Hermes\Component\Broadcast\Repository\TransportRepositoryInterface;
+use Hermes\Component\Broadcast\Subscription\SubscriptionFactory;
 use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
 use Hermes\Component\Broadcast\Transport\TransportInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Prophecy\Promise\ThrowPromise;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class BroadcasterSpec extends ObjectBehavior
@@ -52,6 +54,13 @@ class BroadcasterSpec extends ObjectBehavior
         $this->subscribe($receiver, 'ios.push_notification', 'brainrepo_soccer_friends', 153723263);
         $eventDispatcher->dispatch(SubscriptionEvent::STARTED, Argument::any())->shouldHaveBeenCalled();
         $eventDispatcher->dispatch(SubscriptionEvent::ENDED, Argument::any())->shouldHaveBeenCalled();
+    }
+
+    public function it_can_fail_during_subscription(SubscriptionFactory $subscriptionFactory, ReceiverInterface $receiver, EventDispatcher $eventDispatcher)
+    {
+        $subscriptionFactory->create($receiver, 'ios.push_notification', 'brainrepo_soccer_friends', 153723263)->will(new ThrowPromise(new AddressNotFoundException()));
+        $this->subscribe($receiver, 'ios.push_notification', 'brainrepo_soccer_friends', 153723263);
+        $eventDispatcher->dispatch(SubscriptionEvent::FAILED, Argument::any())->shouldHaveBeenCalled();
     }
 
     public function it_can_broadcast_on_all_tranports(

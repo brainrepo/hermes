@@ -20,11 +20,11 @@ use Hermes\Component\Broadcast\Exception\AddressNotFoundException;
 interface ReceiverInterface
 {
     /**
-     * @param string $TransportName
+     * @param string $transportClass
      *
      * @return AddressInterface
      *
      * @throws AddressNotFoundException
      */
-    public function getAddressByTransport($TransportName);
+    public function getAddressByTransport($transportClass);
 }

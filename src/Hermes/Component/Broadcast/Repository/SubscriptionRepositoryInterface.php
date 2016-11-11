@@ -21,10 +21,11 @@ use Hermes\Component\Broadcast\Transport\TransportInterface;
 interface SubscriptionRepositoryInterface
 {
     /**
-     * @param SubscriptionInterface $subscription
-     *
-     * @return mixed
-     */
+ * @param SubscriptionInterface $subscription
+ *
+ * @return mixed
+ */
+    //todo: to implement
     public function add(SubscriptionInterface $subscription);
 
     /**

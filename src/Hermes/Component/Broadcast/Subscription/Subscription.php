@@ -27,18 +27,38 @@ class Subscription implements SubscriptionInterface
     /**
      * @var string
      */
-    private $transportId;
+    private $transportClass;
+
+    /**
+     * @var string
+     */
+    private $channelId;
+
+    /**
+     * @var int
+     */
+    private $lifetime;
+
+    /**
+     * @var \DateTime
+     */
+    private $createdAt;
 
     /**
      * Subscription constructor.
      *
      * @param AddressInterface $address
-     * @param string           $transportId
+     * @param string           $transportClass
+     * @param string           $channelId
+     * @param int              $lifetime
      */
-    public function __construct(AddressInterface $address, $transportId)
+    public function __construct(AddressInterface $address, $transportClass, $channelId, $lifetime)
     {
         $this->address = $address;
-        $this->transportId = $transportId;
+        $this->transportClass = $transportClass;
+        $this->channelId = $channelId;
+        $this->lifetime = $lifetime;
+        $this->createdAt = new \DateTime();
     }
 
     /**
@@ -54,8 +74,28 @@ class Subscription implements SubscriptionInterface
     /**
      * @return string
      */
-    public function getTransportId()
+    public function getTransportClass()
     {
-        return $this->transportId;
+        return $this->transportClass;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChannelId()
+    {
+        return $this->channelId;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        $now = new \DateTime();
+        $dateInterval = $now->diff($this->createdAt);
+        $lifetimeInterval = new \DateInterval('PT' . $this->lifetime . 'S');
+
+        return $lifetimeInterval >= $dateInterval;
     }
 }

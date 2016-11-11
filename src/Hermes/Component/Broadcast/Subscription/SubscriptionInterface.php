@@ -29,5 +29,5 @@ interface SubscriptionInterface
     /**
      * @return string
      */
-    public function getTransportId();
+    public function getTransportClass();
 }

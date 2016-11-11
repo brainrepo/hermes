@@ -20,12 +20,14 @@ use Hermes\Component\Broadcast\Event\BroadcastFlushEvent;
 use Hermes\Component\Broadcast\Event\MessageQueuedEvent;
 use Hermes\Component\Broadcast\Event\SubscriptionEndedEvent;
 use Hermes\Component\Broadcast\Event\SubscriptionEvent;
+use Hermes\Component\Broadcast\Event\SubscriptionFailedEvent;
 use Hermes\Component\Broadcast\Event\SubscriptionStartedEvent;
-use Hermes\Component\Broadcast\Factory\SubscriptionFactory;
+use Hermes\Component\Broadcast\Exception\AddressNotFoundException;
 use Hermes\Component\Broadcast\Message\MessageInterface;
 use Hermes\Component\Broadcast\Receiver\ReceiverInterface;
 use Hermes\Component\Broadcast\Repository\SubscriptionRepositoryInterface;
 use Hermes\Component\Broadcast\Repository\TransportRepositoryInterface;
+use Hermes\Component\Broadcast\Subscription\SubscriptionFactory;
 use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
 use Hermes\Component\Broadcast\Transport\TransportInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -43,7 +45,7 @@ class Broadcaster
     protected $subscriptionRepository;
 
     /**
-     * @var SubscriptionFactory
+     * @var \Hermes\Component\Broadcast\Subscription\SubscriptionFactory
      */
     protected $subscriptionFactory;
 
@@ -55,10 +57,10 @@ class Broadcaster
     /**
      * Broadcaster constructor.
      *
-     * @param TransportRepositoryInterface    $transportRepository
-     * @param SubscriptionRepositoryInterface $subscriptionRepository
-     * @param SubscriptionFactory             $subscriptionFactory
-     * @param EventDispatcher                 $eventDispatcher
+     * @param TransportRepositoryInterface                                 $transportRepository
+     * @param SubscriptionRepositoryInterface                              $subscriptionRepository
+     * @param \Hermes\Component\Broadcast\Subscription\SubscriptionFactory $subscriptionFactory
+     * @param EventDispatcher                                              $eventDispatcher
      */
     public function __construct(
         TransportRepositoryInterface $transportRepository,
@@ -74,15 +76,19 @@ class Broadcaster
 
     /**
      * @param ReceiverInterface $receiver
-     * @param $transportId
+     * @param $transportClass
      * @param $channelId
      */
-    public function subscribe(ReceiverInterface $receiver, $transportId, $channelId, $lifetime)
+    public function subscribe(ReceiverInterface $receiver, $transportClass, $channelId, $lifetime)
     {
-        $subscription = $this->subscriptionFactory->create($receiver, $transportId, $channelId, $lifetime);
-        $this->eventDispatcher->dispatch(SubscriptionEvent::STARTED, new SubscriptionStartedEvent($subscription));
-        $this->subscriptionRepository->add($subscription);
-        $this->eventDispatcher->dispatch(SubscriptionEvent::ENDED, new SubscriptionEndedEvent($subscription));
+        try {
+            $subscription = $this->subscriptionFactory->create($receiver, $transportClass, $channelId, $lifetime);
+            $this->eventDispatcher->dispatch(SubscriptionEvent::STARTED, new SubscriptionStartedEvent($subscription));
+            $this->subscriptionRepository->add($subscription);
+            $this->eventDispatcher->dispatch(SubscriptionEvent::ENDED, new SubscriptionEndedEvent($subscription));
+        } catch (AddressNotFoundException $exception) {
+            $this->eventDispatcher->dispatch(SubscriptionEvent::FAILED, new SubscriptionFailedEvent());
+        }
     }
 
     /**
