@@ -18,24 +18,17 @@ namespace Hermes\Component\Broadcast\Event;
 use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
 use Symfony\Component\EventDispatcher\Event;
 
-class SubscriptionEvent extends Event
+class SubscriptionFailedEvent extends Event
 {
-    const STARTED = 'hermes.broadcast.subscription.started';
-    const ENDED = 'hermes.broadcast.subscription.ended';
-    const FAILED = 'hermes.broadcast.subscription.failed';
-
     /**
      * @var SubscriptionInterface
      */
     protected $subscription;
 
     /**
-     * SubscriptionEvent constructor.
-     *
-     * @param SubscriptionInterface $subscription
+     * SubscriptionFailedEvent constructor.
      */
-    public function __construct(SubscriptionInterface $subscription)
+    public function __construct()
     {
-        $this->subscription = $subscription;
     }
 }

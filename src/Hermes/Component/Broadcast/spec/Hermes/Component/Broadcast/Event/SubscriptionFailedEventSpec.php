@@ -13,24 +13,21 @@
  * @author Mauro Murru Brainrepo <murru7@gmail.com>
  */
 
-namespace Hermes\Component\Broadcast\Event;
+namespace spec\Hermes\Component\Broadcast\Event;
 
+use Hermes\Component\Broadcast\Event\SubscriptionFailedEvent;
 use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
+use PhpSpec\ObjectBehavior;
 
-class SubscriptionStartedEvent extends SubscriptionEvent
+class SubscriptionFailedEventSpec extends ObjectBehavior
 {
-    /**
-     * @var SubscriptionInterface
-     */
-    protected $subscription;
-
-    /**
-     * SubscriptionStartedEvent constructor.
-     *
-     * @param SubscriptionInterface $subscription
-     */
-    public function __construct(SubscriptionInterface $subscription)
+    public function it_is_initializable()
     {
-        $this->subscription = $subscription;
+        $this->shouldHaveType(SubscriptionFailedEvent::class);
+    }
+
+    public function let(SubscriptionInterface $subscription)
+    {
+        $this->beConstructedWith($subscription);
     }
 }

@@ -25,7 +25,7 @@ class SubscriptionEndedEvent extends SubscriptionEvent
     protected $subscription;
 
     /**
-     * ChannelEvent constructor.
+     * SubscriptionEndedEvent constructor.
      *
      * @param SubscriptionInterface $subscription
      */
