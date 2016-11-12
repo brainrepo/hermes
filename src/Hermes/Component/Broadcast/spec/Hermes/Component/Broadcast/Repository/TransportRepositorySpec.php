@@ -34,7 +34,7 @@ class TransportRepositorySpec extends ObjectBehavior
         $this->getByClass(get_class($transport->getWrappedObject()))->shouldReturn($transport);
     }
 
-    public function it_can_get_transport_by_classes(TransportInterface $transport, SmsTransport $transport1, BaseTransport $baseTransport)
+    public function it_can_get_transport_by_classes(TransportInterface $transport, SmsTransport $transport1)
     {
         $this->add($transport->getWrappedObject());
         $this->add($transport1->getWrappedObject());

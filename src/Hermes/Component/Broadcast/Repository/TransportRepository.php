@@ -49,6 +49,11 @@ class TransportRepository implements TransportRepositoryInterface
     public function getByTransportClasses($allowedTransports = null)
     {
         $returnTransports = [];
+
+        if ($allowedTransports == null) {
+            return $returnTransports;
+        }
+
         foreach ($allowedTransports as $allowedTransport) {
             if ($this->getByClass($allowedTransport) != null) {
                 $returnTransports[] = $this->getByClass($allowedTransport);
