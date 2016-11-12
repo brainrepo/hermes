@@ -30,4 +30,9 @@ interface SubscriptionInterface
      * @return string
      */
     public function getTransportClass();
+
+    /**
+     * @return string
+     */
+    public function getChannelId();
 }

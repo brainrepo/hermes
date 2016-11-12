@@ -16,23 +16,21 @@
 namespace Hermes\Component\Broadcast\Repository;
 
 use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
-use Hermes\Component\Broadcast\Transport\TransportInterface;
 
 interface SubscriptionRepositoryInterface
 {
     /**
- * @param SubscriptionInterface $subscription
- *
- * @return mixed
- */
-    //todo: to implement
+     * @param SubscriptionInterface $subscription
+     *
+     * @return mixed
+     */
     public function add(SubscriptionInterface $subscription);
 
     /**
-     * @param string             $channelId
-     * @param TransportInterface $transport
+     * @param string $channelId
+     * @param string $transport
      *
      * @return SubscriptionInterface[]
      */
-    public function findByChannelAndTransport($channelId, TransportInterface $transport);
+    public function findByChannelAndTransport($channelId, $transportClass);
 }
