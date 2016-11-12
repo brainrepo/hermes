@@ -28,7 +28,7 @@ interface SubscriptionRepositoryInterface
 
     /**
      * @param string $channelId
-     * @param string $transport
+     * @param string $transportClass
      *
      * @return SubscriptionInterface[]
      */
