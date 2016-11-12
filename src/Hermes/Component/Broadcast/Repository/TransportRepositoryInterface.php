@@ -15,20 +15,21 @@
 
 namespace Hermes\Component\Broadcast\Repository;
 
-use Doctrine\Common\Persistence\ObjectRepository;
 use Hermes\Component\Broadcast\Transport\TransportInterface;
 
-interface TransportRepositoryInterface extends ObjectRepository
+interface TransportRepositoryInterface
 {
     public function add(TransportInterface $transport);
-    public function getById($argument1);
+    public function getByClass($argument1);
 
     /**
      * Return by transports id, if is null return all transports.
      *
-     * @param array $transportIds
+     * @param array $allowedTransports
      *
      * @return array
      */
-    public function getByTransportIds($transportIds = null);
+    public function getByTransportClasses($allowedTransports = null);
+
+    public function findAll();
 }

@@ -74,7 +74,7 @@ class BroadcasterSpec extends ObjectBehavior
         SubscriptionInterface $subscription
     ) {
         $channelId = 'brainrepo_soccer_friends';
-        $transportRepository->getByTransportIds(null)->willReturn([$transportSms, $transportEmail]);
+        $transportRepository->getByTransportClasses(null)->willReturn([$transportSms, $transportEmail]);
         $subscriptionRepository->findByChannelAndTransport($channelId, get_class($transportSms->getWrappedObject()))->willReturn([$subscription]);
         $subscriptionRepository->findByChannelAndTransport($channelId, get_class($transportEmail->getWrappedObject()))->willReturn([]);
         $this->broadcast($message, $channelId, null);
@@ -96,7 +96,7 @@ class BroadcasterSpec extends ObjectBehavior
         SubscriptionInterface $subscription
     ) {
         $channelId = 'brainrepo_soccer_friends';
-        $transportRepository->getByTransportIds(['ios.push_notification'])->willReturn([$transportSms1]);
+        $transportRepository->getByTransportClasses(['ios.push_notification'])->willReturn([$transportSms1]);
         $subscriptionRepository->findByChannelAndTransport($channelId, get_class($transportSms1->getWrappedObject()))->willReturn([$subscription]);
         $this->broadcast($message, $channelId, ['ios.push_notification']);
         $transportSms1->queue($subscription, $message)->shouldHaveBeenCalled();

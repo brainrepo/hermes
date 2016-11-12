@@ -100,7 +100,7 @@ class Broadcaster
     {
         $this->eventDispatcher->dispatch(BroadcastEvent::STARTED, new BroadcastEvent($message, $channelId));
 
-        $transports = $this->transportRepository->getByTransportIds($allowedTransports);
+        $transports = $this->transportRepository->getByTransportClasses($allowedTransports);
 
         array_map(function (TransportInterface $transport) use ($message, $channelId) {
             $subscriptions = $this->subscriptionRepository->findByChannelAndTransport($channelId, get_class($transport));
