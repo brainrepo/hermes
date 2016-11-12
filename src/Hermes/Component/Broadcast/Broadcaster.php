@@ -103,7 +103,7 @@ class Broadcaster
         $transports = $this->transportRepository->getByTransportIds($allowedTransports);
 
         array_map(function (TransportInterface $transport) use ($message, $channelId) {
-            $subscriptions = $this->subscriptionRepository->findByChannelAndTransport($channelId, $transport);
+            $subscriptions = $this->subscriptionRepository->findByChannelAndTransport($channelId, get_class($transport));
             array_map(function (SubscriptionInterface $subscription) use ($message, $transport, $channelId) {
                 $this->eventDispatcher->dispatch(BroadcastEvent::PREPARED_FOR_QUEUE, new MessageQueuedEvent($message, $channelId, $transport));
                 $transport->queue($subscription, $message);

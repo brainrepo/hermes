@@ -24,6 +24,7 @@ use Hermes\Component\Broadcast\Message\MessageInterface;
 use Hermes\Component\Broadcast\Receiver\ReceiverInterface;
 use Hermes\Component\Broadcast\Repository\SubscriptionRepositoryInterface;
 use Hermes\Component\Broadcast\Repository\TransportRepositoryInterface;
+use Hermes\Component\Broadcast\Sms\SmsTransport;
 use Hermes\Component\Broadcast\Subscription\SubscriptionFactory;
 use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
 use Hermes\Component\Broadcast\Transport\TransportInterface;
@@ -68,14 +69,14 @@ class BroadcasterSpec extends ObjectBehavior
         EventDispatcher $eventDispatcher,
         TransportRepositoryInterface $transportRepository,
         SubscriptionRepositoryInterface $subscriptionRepository,
-        TransportInterface $transportSms,
+        SmsTransport $transportSms,
         TransportInterface $transportEmail,
         SubscriptionInterface $subscription
     ) {
         $channelId = 'brainrepo_soccer_friends';
         $transportRepository->getByTransportIds(null)->willReturn([$transportSms, $transportEmail]);
-        $subscriptionRepository->findByChannelAndTransport($channelId, $transportSms)->willReturn([$subscription]);
-        $subscriptionRepository->findByChannelAndTransport($channelId, $transportEmail)->willReturn([]);
+        $subscriptionRepository->findByChannelAndTransport($channelId, get_class($transportSms->getWrappedObject()))->willReturn([$subscription]);
+        $subscriptionRepository->findByChannelAndTransport($channelId, get_class($transportEmail->getWrappedObject()))->willReturn([]);
         $this->broadcast($message, $channelId, null);
         $transportSms->queue($subscription, $message)->shouldHaveBeenCalled();
         $transportEmail->queue($subscription, $message)->shouldNotHaveBeenCalled();
@@ -90,15 +91,15 @@ class BroadcasterSpec extends ObjectBehavior
         EventDispatcher $eventDispatcher,
         TransportRepositoryInterface $transportRepository,
         SubscriptionRepositoryInterface $subscriptionRepository,
-        TransportInterface $transportPush,
+        SmsTransport $transportSms1,
         TransportInterface $transportEmail,
         SubscriptionInterface $subscription
     ) {
         $channelId = 'brainrepo_soccer_friends';
-        $transportRepository->getByTransportIds(['ios.push_notification'])->willReturn([$transportPush]);
-        $subscriptionRepository->findByChannelAndTransport($channelId, $transportPush)->willReturn([$subscription]);
+        $transportRepository->getByTransportIds(['ios.push_notification'])->willReturn([$transportSms1]);
+        $subscriptionRepository->findByChannelAndTransport($channelId, get_class($transportSms1->getWrappedObject()))->willReturn([$subscription]);
         $this->broadcast($message, $channelId, ['ios.push_notification']);
-        $transportPush->queue($subscription, $message)->shouldHaveBeenCalled();
+        $transportSms1->queue($subscription, $message)->shouldHaveBeenCalled();
         $transportEmail->queue($subscription, $message)->shouldNotHaveBeenCalled();
         $eventDispatcher->dispatch(BroadcastEvent::STARTED, Argument::any())->shouldHaveBeenCalled();
         $eventDispatcher->dispatch(BroadcastEvent::PREPARED_FOR_QUEUE, Argument::any())->shouldHaveBeenCalled();
