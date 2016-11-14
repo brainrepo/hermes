@@ -57,7 +57,7 @@ class SmsTransportSpec extends ObjectBehavior
 
     public function it_can_add_provider(ProviderInterface $provider1)
     {
-        $provider1->getTransportClass()->willReturn(BaseTransport::class);
+        $provider1->getTransportClass()->willReturn(SmsTransport::class);
         $this->addProvider($provider1);
     }
 

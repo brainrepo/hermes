@@ -73,8 +73,8 @@ abstract class BaseTransport implements TransportInterface
      */
     public function addProvider(ProviderInterface $provider)
     {
-        if (!($provider->getTransportClass() === self::class)) {
-            throw new ProviderNotCompatibleException(sprintf('You are trying to add a provider which support %s transport to a %s.', $provider->getTransportClass(), self::class));
+        if (!($provider->getTransportClass() == static::class)) {
+            throw new ProviderNotCompatibleException(sprintf('You are trying to add a provider which support %s transport to a %s.', $provider->getTransportClass(), static::class));
         }
         $this->providers[] = $provider;
     }
