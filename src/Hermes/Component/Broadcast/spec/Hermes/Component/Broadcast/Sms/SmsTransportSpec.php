@@ -22,7 +22,6 @@ use Hermes\Component\Broadcast\Provider\ProviderInterface;
 use Hermes\Component\Broadcast\Receiver\AddressInterface;
 use Hermes\Component\Broadcast\Sms\SmsTransport;
 use Hermes\Component\Broadcast\Subscription\SubscriptionInterface;
-use Hermes\Component\Broadcast\Transport\BaseTransport;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
